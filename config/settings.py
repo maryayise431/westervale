@@ -21,6 +21,11 @@ MAINTENANCE_MODE = os.environ.get('DJANGO_MAINTENANCE_MODE', '0') == '1'
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://westervalecapital.com',
+    'https://www.westervalecapital.com',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
