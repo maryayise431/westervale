@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Withdrawal History — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Withdrawals{% endblock %}
+{% block page_subtitle %}Track the status of every withdrawal request.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Withdrawal History</h2>
+        <p>All your payout requests and their status.</p>
+    </div>
+    <div class="actions">
+        <a href="{% url 'withdrawals:request' %}" class="btn btn-gold">New Withdrawal <i class="ri-arrow-up-circle-line"></i></a>
+    </div>
+</div>
+
+<div class="card fade-in d1">
+    {% if withdrawals %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Amount</th>
+                    <th>Wallet</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for wd in withdrawals %}
+                <tr>
+                    <td>
+                        <div class="tx-cell">
+                            <span class="tx-icon withdrawal"><i class="ri-arrow-up-circle-line"></i></span>
+                            <span>
+                                <span class="tx-title">Withdrawal #{{ wd.pk }}</span>
+                                <span class="tx-sub">{{ wd.reviewed_at|default:"awaiting review"|date:"M d, Y" }}</span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="amount-neg">-${{ wd.amount|floatformat:2 }}</td>
+                    <td class="mono" style="font-size:0.76rem;">{{ wd.wallet_address|slice:":24" }}…</td>
+                    <td>
+                        {% if wd.status == 'approved' %}<span class="badge badge-emerald">Approved</span>
+                        {% elif wd.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ wd.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-arrow-up-circle-line"></i></div>
+        <h4>No withdrawals yet</h4>
+        <p>When you're ready, request your first payout.</p>
+        <a href="{% url 'withdrawals:request' %}" class="btn btn-gold btn-sm mt-3">Request Withdrawal</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

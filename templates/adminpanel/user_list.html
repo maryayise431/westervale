@@ -1,0 +1,77 @@
+{% extends 'manager_base.html' %}
+{% block title %}User Management — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+{% block page_subtitle %}Search, review and manage every platform user.{% endblock %}
+
+{% block content %}
+<div class="card fade-in d1">
+    <form method="get" class="filter-bar">
+        <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search by username or email…">
+        <button type="submit" class="btn btn-ghost">Search</button>
+        {% if search %}<a href="{% url 'adminpanel:user_list' %}" class="btn btn-outline btn-sm">Clear</a>{% endif %}
+    </form>
+
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Referral</th>
+                    <th>Status</th>
+                    <th>Current Balance</th>
+                    <th>Trading Balance</th>
+                    <th>Joined</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in page_obj %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                            <span class="avatar" style="width:34px;height:34px;font-size:0.75rem;">{{ u.username|slice:":2"|upper }}</span>
+                            <span>
+                                <a href="{% url 'adminpanel:user_detail' u.pk %}" class="font-bold" style="font-size:0.86rem;color:var(--text-primary);text-decoration:none;">{{ u.username }}</a><br>
+                                <span class="text-muted" style="font-size:0.74rem;">{{ u.email|default:"no email" }}</span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="mono" style="font-size:0.78rem;">{{ u.profile.referral_id }}</td>
+                    <td>
+                        {% if u.profile.account_status == 'trading' %}
+                        <span class="badge badge-emerald">Trading</span>
+                        {% else %}
+                        <span class="badge badge-red">Not Trading</span>
+                        {% endif %}
+                    </td>
+                    <td class="amount-neu">${{ u.profile.current_balance|floatformat:2 }}</td>
+                    <td class="text-secondary">${{ u.profile.trading_balance|floatformat:2 }}</td>
+                    <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td><a href="{% url 'adminpanel:user_detail' u.pk %}" class="btn btn-ghost btn-sm"><i class="ri-settings-3-line"></i> Manage</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ search }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}<span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}&q={{ search }}" class="page-link">{{ num }}</a>{% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ search }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>{% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-user-search-line"></i></div>
+        <h4>No users found</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

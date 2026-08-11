@@ -1,0 +1,137 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <meta name="description" content="Manager operations portal — {{ SITE_NAME }}.">
+    <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="ambient"></div>
+    <div class="grid-bg"></div>
+
+    <div class="app">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <a href="{% url 'adminpanel:index' %}" class="sidebar-brand">
+                <span class="brand-icon"><i class="ri-shield-user-line"></i></span>
+                <span class="brand-name">WESTERVALE</span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'adminpanel:index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="ri-dashboard-line"></i> Dashboard
+                </a>
+                <a href="{% url 'adminpanel:user_list' %}" class="nav-link {% if request.resolver_match.url_name in 'user_list,user_detail' %}active{% endif %}">
+                    <i class="ri-user-follow-line"></i> Users
+                </a>
+                <a href="{% url 'adminpanel:deposit_list' %}" class="nav-link {% if request.resolver_match.url_name == 'deposit_list' %}active{% endif %}">
+                    <i class="ri-arrow-down-circle-line"></i> Deposits
+                </a>
+                <a href="{% url 'adminpanel:withdrawal_list' %}" class="nav-link {% if request.resolver_match.url_name == 'withdrawal_list' %}active{% endif %}">
+                    <i class="ri-arrow-up-circle-line"></i> Withdrawals
+                </a>
+                <a href="{% url 'adminpanel:transaction_list' %}" class="nav-link {% if request.resolver_match.url_name in 'transaction_list,transaction_create,transaction_edit' %}active{% endif %}">
+                    <i class="ri-exchange-funds-line"></i> Transactions
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <span class="avatar">{{ request.user.username|slice:":2"|upper }}</span>
+                    <span class="meta">
+                        <strong>{{ request.user.username }}</strong>
+                        <small>{{ request.user.email }}</small>
+                    </span>
+                </div>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="button" class="logout-btn" onclick="openLogoutModal()"><i class="ri-logout-box-r-line"></i> Sign out</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main">
+            <header class="topbar">
+                <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu"><i class="ri-menu-line"></i></button>
+                <div class="topbar-title">
+                    <h1>{% block page_title %}{{ SITE_NAME }}{% endblock %}</h1>
+                    <p>{% block page_subtitle %}&nbsp;{% endblock %}</p>
+                </div>
+                <div class="topbar-right">
+                    <button type="button" class="top-icon-btn" id="themeToggleBtn" aria-label="Toggle light and dark mode" title="Toggle theme" onclick="toggleAdminTheme()">
+                        <i class="ri-moon-line" id="adminThemeIcon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Logout confirmation -->
+    <div class="modal-overlay" id="logoutModal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="ri-logout-box-r-line"></i></div>
+            <h3>Sign out?</h3>
+            <p>You'll need to sign in again to access the control center.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeLogoutModal()">Cancel</button>
+                <form method="post" action="{% url 'accounts:logout' %}" id="logoutForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><i class="ri-logout-box-r-line"></i> Sign out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <script id="djangoMessages" type="application/json" data-messages='[{% for message in messages %}{"text": "{{ message|escapejs }}", "tags": "{{ message.tags|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'></script>
+    {% endif %}
+
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/clipboard.js' %}"></script>
+    <script src="{% static 'js/logout-confirm.js' %}"></script>
+    <script>
+    function getAdminTheme() {
+        try {
+            const m = document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);
+            return m ? m[1] : (localStorage.getItem('theme') || 'dark');
+        } catch (e) { return 'dark'; }
+    }
+    function saveAdminTheme(t) {
+        try { localStorage.setItem('theme', t); } catch (e) {}
+        document.cookie = 'theme=' + t + '; path=/; max-age=31536000; SameSite=Lax';
+    }
+    function updateAdminThemeIcon() {
+        const icon = document.getElementById('adminThemeIcon');
+        if (!icon) return;
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        icon.className = isDark ? 'ri-moon-line' : 'ri-sun-line';
+    }
+    function toggleAdminTheme() {
+        const html = document.documentElement;
+        const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        saveAdminTheme(next);
+        updateAdminThemeIcon();
+    }
+    document.addEventListener('DOMContentLoaded', updateAdminThemeIcon);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

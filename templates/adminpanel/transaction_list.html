@@ -1,0 +1,80 @@
+{% extends 'manager_base.html' %}
+{% block title %}Transactions — Admin — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}All Transactions{% endblock %}
+{% block page_subtitle %}The full ledger across every user.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Transaction Ledger</h2>
+    </div>
+    <div class="actions">
+        <form method="get" style="display:flex;align-items:center;gap:0.5rem;">
+            <select name="sort" class="form-control" style="width:auto;display:inline-block;" onchange="this.form.submit()" aria-label="Sort transactions">
+                <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+                <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                <option value="amount_high" {% if sort == 'amount_high' %}selected{% endif %}>Highest amount</option>
+                <option value="amount_low" {% if sort == 'amount_low' %}selected{% endif %}>Lowest amount</option>
+            </select>
+        </form>
+        <a href="{% url 'adminpanel:transaction_create' %}" class="btn btn-gold"><i class="ri-add-line"></i> New Transaction</a>
+    </div>
+</div>
+
+<div class="card fade-in d1">
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in page_obj %}
+                <tr>
+                    <td class="mono" style="font-size:0.74rem;">{{ t.transaction_id|slice:":8"|upper }}</td>
+                    <td class="font-bold">{{ t.user.username }}</td>
+                    <td><span class="badge badge-gray">{{ t.get_type_display }}</span></td>
+                    <td class="{% if t.type == 'withdrawal' %}amount-neg{% else %}amount-pos{% endif %}">${{ t.amount|floatformat:2 }}</td>
+                    <td>
+                        {% if t.status == 'completed' %}<span class="badge badge-emerald">Completed</span>
+                        {% elif t.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ t.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'adminpanel:transaction_edit' t.pk %}" class="btn btn-ghost btn-sm"><i class="ri-edit-line"></i> Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}<span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}&sort={{ sort }}" class="page-link">{{ num }}</a>{% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>{% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-exchange-funds-line"></i></div>
+        <h4>No transactions yet</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

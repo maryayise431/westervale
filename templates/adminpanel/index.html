@@ -1,0 +1,152 @@
+{% extends 'manager_base.html' %}
+{% block title %}Admin Panel — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Admin Panel{% endblock %}
+{% block page_subtitle %}Platform overview and control center.{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="card stat-card gold fade-in d1">
+        <div class="stat-top">
+            <span class="stat-label">Total Users</span>
+            <span class="stat-icon"><i class="ri-user-3-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ total_users }}">0</span></div>
+        <div class="stat-foot">All registered holders</div>
+    </div>
+    <div class="card stat-card emerald fade-in d2">
+        <div class="stat-top">
+            <span class="stat-label">Active Holders</span>
+            <span class="stat-icon"><i class="ri-funds-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ active_investors }}">0</span></div>
+        <div class="stat-foot">Holdings currently running</div>
+    </div>
+    <div class="card stat-card amber fade-in d3">
+        <div class="stat-top">
+            <span class="stat-label">Pending Deposits</span>
+            <span class="stat-icon"><i class="ri-arrow-down-circle-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ pending_deposits }}">0</span></div>
+        <div class="stat-foot">Awaiting your review</div>
+    </div>
+    <div class="card stat-card red fade-in d4">
+        <div class="stat-top">
+            <span class="stat-label">Pending Withdrawals</span>
+            <span class="stat-icon"><i class="ri-arrow-up-circle-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ pending_withdrawals }}">0</span></div>
+        <div class="stat-foot">Awaiting your review</div>
+    </div>
+    <div class="card stat-card blue fade-in d5">
+        <div class="stat-top">
+            <span class="stat-label">Total Revenue</span>
+            <span class="stat-icon"><i class="ri-bank-card-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ revenue }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Sum of all user balances</div>
+    </div>
+    <div class="card stat-card gold fade-in d6">
+        <div class="stat-top">
+            <span class="stat-label">Trading Balances</span>
+            <span class="stat-icon"><i class="ri-exchange-dollar-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ trading_balance }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Capital under management</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card fade-in d2">
+        <div class="card-title">
+            <h3>Pending Deposits</h3>
+            <a href="{% url 'adminpanel:deposit_list' %}?status=pending" class="btn btn-ghost btn-sm">View All</a>
+        </div>
+        {% if recent_deposits %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>User</th><th>Amount</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                    {% for d in recent_deposits %}
+                    <tr>
+                        <td class="font-bold">{{ d.user.username }}</td>
+                        <td class="amount-pos">${{ d.amount|floatformat:2 }}</td>
+                        <td>{{ d.created_at|date:"M d" }}</td>
+                        <td><a href="{% url 'adminpanel:deposit_list' %}?status=pending" class="btn btn-outline btn-sm">Review</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding:1.5rem;"><h4>No pending deposits</h4><p>All caught up.</p></div>
+        {% endif %}
+    </div>
+
+    <div class="card fade-in d3">
+        <div class="card-title">
+            <h3>Pending Withdrawals</h3>
+            <a href="{% url 'adminpanel:withdrawal_list' %}?status=pending" class="btn btn-ghost btn-sm">View All</a>
+        </div>
+        {% if recent_withdrawals %}
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>User</th><th>Amount</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                    {% for w in recent_withdrawals %}
+                    <tr>
+                        <td class="font-bold">{{ w.user.username }}</td>
+                        <td class="amount-neg">${{ w.amount|floatformat:2 }}</td>
+                        <td>{{ w.created_at|date:"M d" }}</td>
+                        <td><a href="{% url 'adminpanel:withdrawal_list' %}?status=pending" class="btn btn-outline btn-sm">Review</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state" style="padding:1.5rem;"><h4>No pending withdrawals</h4><p>All caught up.</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid-2 mt-3">
+    <div class="card fade-in d3">
+        <div class="card-title">
+            <h3>Latest Transactions</h3>
+            <a href="{% url 'adminpanel:transaction_list' %}" class="btn btn-ghost btn-sm">Manage</a>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead><tr><th>User</th><th>Type</th><th>Amount</th></tr></thead>
+                <tbody>
+                    {% for t in recent_transactions %}
+                    <tr>
+                        <td class="font-bold">{{ t.user.username }}</td>
+                        <td><span class="badge badge-gray">{{ t.get_type_display }}</span></td>
+                        <td class="{% if t.type == 'withdrawal' %}amount-neg{% else %}amount-pos{% endif %}">${{ t.amount|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card fade-in d4">
+        <div class="card-title">
+            <h3>Recent Audit Activity</h3>
+            <a href="{% url 'adminpanel:audit_log' %}" class="btn btn-ghost btn-sm">Full Log</a>
+        </div>
+        <div class="timeline">
+            {% for log in recent_audit %}
+            <div class="timeline-item">
+                <div class="tl-title">{{ log.action }}</div>
+                <div class="tl-sub">{{ log.admin.username }}{% if log.target_user %} → {{ log.target_user.username }}{% endif %} · {{ log.timestamp|timesince }} ago</div>
+            </div>
+            {% empty %}
+            <div class="empty-state" style="padding:1rem;"><h4>No audit entries yet</h4></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

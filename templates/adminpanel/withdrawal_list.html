@@ -1,0 +1,98 @@
+{% extends 'manager_base.html' %}
+{% block title %}Withdrawal Management — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Withdrawal Management{% endblock %}
+{% block page_subtitle %}Review, approve or reject payout requests.{% endblock %}
+
+{% block content %}
+<div class="tabs">
+    <a href="{% url 'adminpanel:withdrawal_list' %}?status=pending" class="tab-link {% if status == 'pending' %}active{% endif %}">Pending</a>
+    <a href="{% url 'adminpanel:withdrawal_list' %}?status=approved" class="tab-link {% if status == 'approved' %}active{% endif %}">Approved</a>
+    <a href="{% url 'adminpanel:withdrawal_list' %}?status=rejected" class="tab-link {% if status == 'rejected' %}active{% endif %}">Rejected</a>
+    <a href="{% url 'adminpanel:withdrawal_list' %}" class="tab-link {% if not status %}active{% endif %}">All</a>
+</div>
+
+<div style="display:flex;justify-content:flex-end;margin:1rem 0;">
+    <form method="get">
+        <input type="hidden" name="status" value="{{ status }}">
+        <select name="sort" class="form-control" style="width:auto;display:inline-block;" onchange="this.form.submit()" aria-label="Sort withdrawals">
+            <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+            <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+            <option value="amount_high" {% if sort == 'amount_high' %}selected{% endif %}>Highest amount</option>
+            <option value="amount_low" {% if sort == 'amount_low' %}selected{% endif %}>Lowest amount</option>
+        </select>
+    </form>
+</div>
+
+<div class="card fade-in d1">
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Wallet</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for w in page_obj %}
+                <tr>
+                    <td class="font-bold">{{ w.user.username }}</td>
+                    <td class="amount-neg">${{ w.amount|floatformat:2 }}</td>
+                    <td class="mono" style="font-size:0.76rem;">{{ w.wallet_address|slice:":22" }}…</td>
+                    <td class="text-secondary">${{ w.user.profile.current_balance|floatformat:2 }}</td>
+                    <td>
+                        {% if w.status == 'approved' %}<span class="badge badge-emerald">Approved</span>
+                        {% elif w.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ w.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if w.status == 'pending' %}
+                        <details>
+                            <summary class="btn btn-sm btn-outline" style="list-style:none;display:inline-flex;"><i class="ri-check-line"></i> Review</summary>
+                            <div class="mt-2">
+                                <form method="post" action="{% url 'adminpanel:withdrawal_review' w.pk 'approve' %}">
+                                    {% csrf_token %}
+                                    <textarea name="admin_remarks" class="form-control mb-1" style="min-height:56px;" placeholder="Optional remarks"></textarea>
+                                    <button type="submit" class="btn btn-sm btn-emerald">Approve &amp; Debit</button>
+                                </form>
+                                <form method="post" action="{% url 'adminpanel:withdrawal_review' w.pk 'reject' %}" class="mt-2">
+                                    {% csrf_token %}
+                                    <textarea name="admin_remarks" class="form-control mb-1" style="min-height:56px;" placeholder="Rejection reason (optional)"></textarea>
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="ri-close-line"></i> Reject</button>
+                                </form>
+                            </div>
+                        </details>
+                        {% else %}<span class="text-muted" style="font-size:0.78rem;">{{ w.reviewed_at|date:"M d" }}</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}<span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}&status={{ status }}&sort={{ sort }}" class="page-link">{{ num }}</a>{% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>{% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-arrow-up-circle-line"></i></div>
+        <h4>No withdrawals in this view</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

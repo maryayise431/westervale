@@ -1,0 +1,9 @@
+{% autoescape off %}{{ site_name }} — Manager Notification
+
+{{ subject }}
+
+{{ message }}
+
+Log in to the manager panel to review and act on this request.
+
+This is an automated notification from the {{ site_name }} management system.{% endautoescape %}

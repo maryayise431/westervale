@@ -1,0 +1,173 @@
+{% extends 'manager_base.html' %}
+{% block title %}Deposit {{ deposit.reference|default:deposit.pk }} — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Deposit Review{% endblock %}
+{% block page_subtitle %}{{ deposit.reference|default:"#" }}{{ deposit.pk }} · {{ deposit.user.username }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Deposit {{ deposit.reference|default:"#" }}{{ deposit.pk }}</h2>
+        <p>
+            {{ deposit.user.username }} ·
+            <span class="badge {% if deposit.status == 'approved' %}badge-emerald{% elif deposit.status == 'rejected' %}badge-red{% else %}badge-amber{% endif %}">
+                {{ deposit.get_status_display }}
+            </span>
+            {% if deposit.source == 'balance' %}<span class="badge badge-blue">Paid from balance</span>{% endif %}
+        </p>
+    </div>
+    <div class="actions">
+        <a href="{% url 'adminpanel:deposit_list' %}" class="btn btn-ghost"><i class="ri-arrow-left-line"></i> Back to Deposits</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div>
+        <div class="card fade-in d1">
+            <div class="card-title">
+                <h3><i class="ri-receipt-line" style="color:var(--gold-light);"></i> Deposit Details</h3>
+                <span class="badge badge-gray">{{ deposit.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div class="deposit-summary">
+                <div class="ds-item">
+                    <div class="ds-label">Reference</div>
+                    <div class="ds-value mono">{{ deposit.reference|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">User</div>
+                    <div class="ds-value">{{ deposit.user.username }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Email</div>
+                    <div class="ds-value">{{ deposit.user.email|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Plan</div>
+                    <div class="ds-value">{{ deposit.investment.plan.name|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Amount</div>
+                    <div class="ds-value amount-pos">${{ deposit.amount|floatformat:2 }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Source</div>
+                    <div class="ds-value">{% if deposit.source == 'balance' %}Balance{% else %}External Crypto{% endif %}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Wallet Address</div>
+                    <div class="ds-value mono" style="font-size:0.72rem;">{{ deposit.wallet_address_sent_to|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Transaction Hash</div>
+                    <div class="ds-value mono" style="font-size:0.72rem;">{{ deposit.transaction_hash|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Submitted</div>
+                    <div class="ds-value">{{ deposit.created_at|date:"M d, Y H:i" }}</div>
+                </div>
+                {% if deposit.reviewed_at %}
+                <div class="ds-item">
+                    <div class="ds-label">Reviewed</div>
+                    <div class="ds-value">{{ deposit.reviewed_at|date:"M d, Y H:i" }} by {{ deposit.reviewed_by.username|default:"—" }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if deposit.notes %}
+            <div class="form-hint mt-3" style="align-items:flex-start;">
+                <i class="ri-sticky-note-line"></i>
+                <span><strong>User notes:</strong> {{ deposit.notes }}</span>
+            </div>
+            {% endif %}
+
+            {% if deposit.admin_remarks %}
+            <div class="form-hint mt-3" style="align-items:flex-start;">
+                <i class="ri-chat-3-line"></i>
+                <span><strong>Admin remarks:</strong> {{ deposit.admin_remarks }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card fade-in d2 mt-3">
+            <div class="card-title">
+                <h3><i class="ri-swap-line" style="color:var(--gold-light);"></i> Related Transactions</h3>
+            </div>
+            {% if transactions %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td><span class="badge badge-gray">{{ t.get_type_display }}</span></td>
+                            <td class="{% if t.type == 'withdrawal' or t.type == 'investment' %}amount-neg{% else %}amount-pos{% endif %}">${{ t.amount|floatformat:2 }}</td>
+                            <td><span class="badge badge-gray">{{ t.get_status_display }}</span></td>
+                            <td>{{ t.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state" style="padding:1.2rem;"><h4>No related transactions</h4></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <div class="card fade-in d2 mb-3">
+            <div class="card-title">
+                <h3><i class="ri-image-line" style="color:var(--gold-light);"></i> Payment Proof</h3>
+                {% if deposit.payment_proof %}
+                <a href="{{ deposit.payment_proof.url }}" target="_blank" class="btn btn-ghost btn-sm">Open Full Size</a>
+                {% endif %}
+            </div>
+            {% if deposit.payment_proof %}
+            <a href="{{ deposit.payment_proof.url }}" target="_blank">
+                <img src="{{ deposit.payment_proof.url }}" alt="Payment proof" style="width:100%; border-radius:var(--radius-sm); border:1px solid var(--border); display:block;">
+            </a>
+            {% else %}
+            <div class="empty-state" style="padding:1.5rem;">
+                <div class="icon"><i class="ri-image-add-line"></i></div>
+                <h4>No proof uploaded</h4>
+                {% if deposit.source == 'balance' %}<p>This deposit was paid from the user's balance, so no proof is required.</p>{% else %}<p>The user has not attached a payment proof yet.</p>{% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if deposit.status == 'pending' %}
+        <div class="card fade-in d3">
+            <div class="card-title">
+                <h3><i class="ri-shield-check-line" style="color:var(--gold-light);"></i> Review Decision</h3>
+            </div>
+            <form method="post" action="{% url 'adminpanel:deposit_review' deposit.pk 'approve' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="approveRemarks">Remarks (Optional)</label>
+                    <textarea id="approveRemarks" name="admin_remarks" class="form-control" style="min-height:72px;" placeholder="Approval notes for the user's record"></textarea>
+                </div>
+                <button type="submit" class="btn btn-emerald btn-block"><i class="ri-check-double-line"></i> Approve {% if deposit.source != 'balance' %}&amp; Credit ${{ deposit.amount|floatformat:2 }}{% endif %}</button>
+            </form>
+            <form method="post" action="{% url 'adminpanel:deposit_review' deposit.pk 'reject' %}" class="mt-3">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="rejectRemarks">Rejection Reason</label>
+                    <textarea id="rejectRemarks" name="admin_remarks" class="form-control" style="min-height:72px;" placeholder="Tell the user why this was rejected"></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger btn-block"><i class="ri-close-circle-line"></i> Reject</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="card fade-in d3">
+            <div class="card-title">
+                <h3><i class="ri-history-line" style="color:var(--gold-light);"></i> Review Complete</h3>
+            </div>
+            <div class="form-hint" style="align-items:flex-start;">
+                <i class="ri-checkbox-circle-line"></i>
+                <span>This deposit was <strong>{{ deposit.get_status_display|lower }}</strong>{% if deposit.reviewed_by %} by {{ deposit.reviewed_by.username }}{% endif %} on {{ deposit.reviewed_at|date:"M d, Y H:i" }}.</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

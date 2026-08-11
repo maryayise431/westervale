@@ -1,0 +1,376 @@
+/* ===== Auth pages — simple cards on a rich background ===== */
+:root {
+    --auth-gold: #895129;
+    --auth-gold-light: #D4A574;
+    --auth-gold-bright: #E8C39A;
+    --auth-cyan: #00D4FF;
+}
+
+/* ===== Background layers ===== */
+.auth-body {
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background:
+        radial-gradient(900px 500px at 85% -10%, rgba(137, 81, 41, 0.28), transparent 60%),
+        radial-gradient(800px 500px at -10% 110%, rgba(0, 212, 255, 0.1), transparent 55%),
+        var(--bg);
+}
+
+.auth-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+    will-change: transform;
+}
+
+.auth-orb-1 {
+    width: 380px;
+    height: 380px;
+    top: -120px;
+    right: -80px;
+    background: radial-gradient(circle, rgba(212, 165, 116, 0.5), transparent 70%);
+}
+
+.auth-orb-2 {
+    width: 340px;
+    height: 340px;
+    bottom: -100px;
+    left: -120px;
+    background: radial-gradient(circle, rgba(137, 81, 41, 0.5), transparent 70%);
+}
+
+.auth-orb-3 {
+    width: 240px;
+    height: 240px;
+    top: 40%;
+    right: 8%;
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.14), transparent 70%);
+}
+
+#authParticles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ===== Shell (centers when short, scrolls when tall) ===== */
+.auth-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    margin: auto;
+    padding: 3rem 1.25rem;
+}
+
+/* ===== Simple card ===== */
+.auth-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg), 0 0 60px rgba(137, 81, 41, 0.1);
+    padding: 2.5rem 2.25rem;
+    position: relative;
+    overflow: hidden;
+    animation: authIn 0.6s ease both;
+}
+
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--grad-gold);
+}
+
+@keyframes authIn {
+    0% { opacity: 0; transform: translateY(16px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Logo ===== */
+.auth-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.8rem;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-logo .brand-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    font-size: 1.6rem;
+    margin-bottom: 0.9rem;
+    background: linear-gradient(135deg, var(--auth-gold), var(--auth-gold-light));
+    color: #0A0A0F;
+    box-shadow: 0 12px 30px rgba(137, 81, 41, 0.4);
+}
+
+.auth-logo .brand-name {
+    font-size: 1.4rem;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.06em;
+    color: var(--text-primary);
+}
+
+.auth-logo .brand-name span { color: var(--auth-gold-light); }
+
+.auth-logo .tagline {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+/* ===== Title ===== */
+.auth-title {
+    text-align: center;
+    margin-bottom: 1.7rem;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-title h2 {
+    font-size: 1.45rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.auth-title p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}
+
+/* ===== Form ===== */
+.auth-form {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.1rem;
+}
+
+.auth-form .form-control {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 0.8rem 1.05rem;
+    color: var(--text-primary);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.auth-form .form-control:focus {
+    border-color: rgba(212, 165, 116, 0.6);
+    box-shadow: 0 0 0 3px rgba(137, 81, 41, 0.18);
+}
+
+.auth-form .form-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.auth-form .btn {
+    margin-top: 0.6rem;
+}
+
+/* ===== Alt / foot ===== */
+.auth-alt {
+    text-align: center;
+    margin-top: 1.4rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1;
+}
+
+.auth-alt a {
+    color: var(--auth-gold-light);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-alt a:hover {
+    color: var(--auth-gold-bright);
+    text-decoration: underline;
+}
+
+.auth-security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 1.2rem;
+}
+
+.auth-foot {
+    text-align: center;
+    margin-top: 1.4rem;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.auth-bonus {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.85rem 1rem;
+    border-radius: 13px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    font-size: 0.82rem;
+    color: var(--emerald-light);
+    margin-bottom: 1.5rem;
+}
+
+/* ===== Errors (only visible on errors) ===== */
+.error-list {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 13px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.4rem;
+    font-size: 0.82rem;
+    color: #F87171;
+    list-style: none;
+}
+
+.error-list li { display: flex; gap: 0.5rem; align-items: baseline; padding: 2px 0; }
+
+/* Password strength meter */
+.strength-meter {
+    height: 5px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.strength-meter span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: linear-gradient(90deg, var(--red), var(--amber), var(--emerald));
+}
+
+/* Real-time validation */
+.form-control.input-invalid {
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.form-error { display: block; }
+
+/* ===== OTP page ===== */
+.auth-title-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--auth-gold), var(--auth-gold-light));
+    color: #0A0A0F;
+    box-shadow: 0 10px 26px rgba(137, 81, 41, 0.35);
+    margin-bottom: 1rem;
+}
+
+.otp-email-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.8rem 1rem;
+    border-radius: 13px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue-light);
+    margin-bottom: 1.4rem;
+    word-break: break-all;
+}
+
+.otp-inputs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+}
+
+.otp-digit {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    padding: 0;
+    letter-spacing: 0;
+    width: 3.1rem;
+    height: 3.6rem;
+    border-radius: 13px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-input);
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.otp-digit:focus {
+    border-color: rgba(212, 165, 116, 0.75);
+    box-shadow: 0 0 0 3px rgba(137, 81, 41, 0.18);
+    transform: translateY(-2px);
+}
+
+.otp-digit.filled {
+    border-color: rgba(212, 165, 116, 0.45);
+}
+
+.otp-resend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.otp-countdown {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+/* ===== Light theme overrides ===== */
+[data-theme="light"] .auth-orb { opacity: 0.3; }
+
+[data-theme="light"] .strength-meter {
+    background: rgba(26, 26, 46, 0.1);
+}
+
+/* ===== Email prompt modal ===== */
+#emailPromptInput { margin-top: 1.2rem; text-align: center; }
+#emailPromptError { min-height: 1.2rem; }
+
+@media (max-width: 420px) {
+    .otp-inputs { gap: 0.3rem; }
+    .otp-digit { font-size: 1.05rem; }
+    .auth-card { padding: 2rem 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-card { animation: none; }
+}

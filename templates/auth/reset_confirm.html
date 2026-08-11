@@ -1,0 +1,47 @@
+﻿{% extends 'auth_base.html' %}
+{% load static %}
+{% block title %}Set New Password {{ SITE_NAME }}{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-title">
+        <h2>Choose a New Password</h2>
+    </div>
+
+    {% if form.non_field_errors %}
+    <ul class="error-list">
+        {% for error in form.non_field_errors %}<li><i class="ri-alert-line"></i> {{ error }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" class="auth-form" id="resetForm" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="id_password1">New Password</label>
+            <input type="password" id="id_password1" name="password1" class="form-control" placeholder="New password" autocomplete="new-password" data-live="password" required>
+            <div class="strength-meter"><span id="strengthBar"></span></div>
+            <span class="form-error" data-error-for="password">
+                {% for error in form.password1.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_password2">Confirm New Password</label>
+            <input type="password" id="id_password2" name="password2" class="form-control" placeholder="Repeat new password" autocomplete="new-password" data-live="confirm" required>
+            <span class="form-error" data-error-for="confirm">
+                {% for error in form.password2.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <button type="submit" class="btn btn-gold btn-lg btn-block">
+            Reset Password <i class="ri-check-line"></i>
+        </button>
+    </form>
+
+    <div class="auth-alt">
+        <a href="{% url 'accounts:login' %}">Back to sign in</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

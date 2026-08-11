@@ -1,0 +1,164 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <meta name="description" content="Premium holding management platform.">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="ambient"></div>
+    <div class="grid-bg"></div>
+
+    <div class="app">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <a href="{% url 'dashboard:index' %}" class="sidebar-brand">
+                <span class="brand-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                <span>
+                    <span class="brand-name">WESTERVALE<span> CAPITAL</span></span>
+                    <span class="brand-tag">Wealth Platform</span>
+                </span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard:index' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' and not request.resolver_match.url_name == 'index' %}active{% endif %}" data-nav="dashboard">
+                    <i class="ri-dashboard-3-line"></i> Dashboard
+                </a>
+                <a href="{% url 'transactions:history' %}" class="nav-link" data-nav="transactions">
+                    <i class="ri-exchange-funds-line"></i> Transactions
+                </a>
+
+                <a href="{% url 'investments:landing' %}" class="nav-link {% if request.resolver_match.app_name == 'investments' and request.resolver_match.url_name == 'landing' %}active{% endif %}" data-nav="investments">
+                    <i class="ri-funds-line"></i> Plan
+                </a>
+
+                <a href="{% url 'deposits:index' %}" class="nav-link {% if request.resolver_match.app_name == 'deposits' %}active{% endif %}" data-nav="deposits">
+                    <i class="ri-arrow-down-circle-line"></i> Deposits
+                </a>
+                <a href="{% url 'withdrawals:request' %}" class="nav-link {% if request.resolver_match.app_name == 'withdrawals' and request.resolver_match.url_name == 'request' %}active{% endif %}" data-nav="withdrawals">
+                    <i class="ri-arrow-up-circle-line"></i> Withdraw
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="nav-link {% if request.resolver_match.app_name == 'accounts' and request.resolver_match.url_name == 'profile' %}active{% endif %}" data-nav="profile">
+                    <i class="ri-user-settings-line"></i> Profile
+                </a>
+
+                {% if request.user.is_staff %}
+                <div class="nav-section">Administration</div>
+                <a href="{% url 'adminpanel:index' %}" class="nav-link {% if request.resolver_match.app_name == 'adminpanel' %}active{% endif %}" data-nav="admin">
+                    <i class="ri-shield-star-line"></i> Admin Panel
+                </a>
+                {% endif %}
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{% url 'accounts:profile' %}" class="sidebar-user">
+                    {% if request.user.profile.profile_picture %}
+                        <span class="avatar"><img src="{{ request.user.profile.profile_picture.url }}" alt="{{ request.user.username }}"></span>
+                    {% else %}
+                        <span class="avatar">{{ request.user.username|slice:":2"|upper }}</span>
+                    {% endif %}
+                    <span class="meta">
+                        <strong>{{ request.user.username }}</strong>
+                        <small>{{ request.user.profile.referral_id }}</small>
+                    </span>
+                    <i class="ri-arrow-right-s-line text-muted"></i>
+                </a>
+                <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="button" class="logout-btn" onclick="openLogoutModal()"><i class="ri-logout-box-r-line"></i> Sign out</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main">
+            <header class="topbar">
+                <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu"><i class="ri-menu-line"></i></button>
+                <div class="topbar-title">
+                    <h1>{% block page_title %}{{ SITE_NAME }}{% endblock %}</h1>
+                    <p>{% block page_subtitle %}&nbsp;{% endblock %}</p>
+                </div>
+                <div class="topbar-right">
+                    <a href="{% url 'deposits:index' %}" class="top-icon-btn" aria-label="Deposits"><i class="ri-arrow-down-circle-line"></i></a>
+                    <a href="{% url 'accounts:profile' %}" class="top-icon-btn" aria-label="Profile"><i class="ri-user-3-line"></i></a>
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'adminpanel:index' %}" class="top-icon-btn" aria-label="Admin"><i class="ri-shield-star-line"></i></a>
+                    {% endif %}
+                </div>
+            </header>
+
+            <main class="content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Logout confirmation -->
+    <div class="modal-overlay" id="logoutModal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="ri-logout-box-r-line"></i></div>
+            <h3>Sign out?</h3>
+            <p>You'll need to sign in again to access your account.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="closeLogoutModal()">Cancel</button>
+                <form method="post" action="{% url 'accounts:logout' %}" id="logoutForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><i class="ri-logout-box-r-line"></i> Sign out</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <script id="djangoMessages" type="application/json" data-messages='[{% for message in messages %}{"text": "{{ message|escapejs }}", "tags": "{{ message.tags|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'></script>
+    {% endif %}
+
+
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/clipboard.js' %}"></script>
+    <script src="{% static 'js/proof-upload.js' %}"></script>
+    <script src="{% static 'js/logout-confirm.js' %}"></script>
+    <script>
+    function toggleCollapse(btn) {
+        var id = btn.getAttribute('data-target');
+        var body = document.getElementById(id);
+        if (!body) return;
+        var card = body.parentElement;
+        if (!card) return;
+        var open = body.hidden === true;
+        body.hidden = !open;
+        card.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a7af416a0d9191d4af10760/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>

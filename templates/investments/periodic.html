@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Periodic Plans — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/investments.css' %}">
+{% endblock %}
+
+{% block page_title %}Periodic Holding Plans{% endblock %}
+
+{% block content %}
+<div class="tabs">
+    <a href="{% url 'investments:landing' %}" class="tab-link">Overview</a>
+    <a href="{% url 'investments:periodic' %}" class="tab-link active">Periodic</a>
+    <a href="{% url 'investments:flexible' %}" class="tab-link">Flexible</a>
+    <a href="{% url 'investments:mine' %}" class="tab-link">My Holdings</a>
+</div>
+
+<section class="plan-hero fade-in">
+    <div class="ph-icon"><i class="ri-flashlight-line"></i></div>
+    <h2>Periodic Plans</h2>
+</section>
+
+<div class="plans-grid">
+    {% for plan in plans %}
+    <div class="plan-card fade-in d{{ forloop.counter }}">
+        <div class="plan-flag">
+            {% if forloop.last %}<span class="badge badge-gold">Most Popular</span>{% elif forloop.first %}<span class="badge badge-blue">Fastest</span>{% endif %}
+        </div>
+        <div class="plan-name"><i class="ri-flashlight-line"></i> {{ plan.name }}</div>
+        <p class="plan-desc">{{ plan.description }}</p>
+
+        <div class="plan-metrics">
+            <div class="plan-metric">
+                <div class="pm-value gold">${{ plan.min_amount|floatformat:0 }}+</div>
+                <div class="pm-label">Minimum</div>
+            </div>
+            <div class="plan-metric">
+                <div class="pm-value gold">{{ plan.roi_percent|floatformat:0 }}%</div>
+                <div class="pm-label">Return</div>
+            </div>
+            <div class="plan-metric">
+                <div class="pm-value">{{ plan.duration_label }}</div>
+                <div class="pm-label">Duration</div>
+            </div>
+            <div class="plan-metric">
+                <div class="pm-value emerald">${{ plan.per_1000|floatformat:0|intcomma }}</div>
+                <div class="pm-label">Per $1,000</div>
+            </div>
+        </div>
+
+        <ul class="plan-features">
+            {% for feature in plan.features|slice:":3" %}
+            <li><i class="ri-check-line"></i> {{ feature }}</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'deposits:initiate' plan.slug %}" class="btn btn-gold btn-block">Hold Now <i class="ri-arrow-right-line"></i></a>
+    </div>
+    {% empty %}
+    <div class="card">
+        <div class="empty-state">
+            <div class="icon"><i class="ri-flashlight-line"></i></div>
+            <h4>No periodic plans available</h4>
+            <p>Check back soon.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card mt-4 fade-in">
+    <div class="flex-between">
+        <div>
+            <h3 class="font-bold">Not sure which plan to pick?</h3>
+        </div>
+        <a href="{% url 'investments:flexible' %}" class="btn btn-outline">View Flexible Plans</a>
+    </div>
+</div>
+{% endblock %}

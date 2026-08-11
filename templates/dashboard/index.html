@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Dashboard — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back, {{ request.user.username }} — here's your portfolio at a glance.{% endblock %}
+
+{% block content %}
+<section class="hero-balance fade-in">
+    <div class="hb-label"><i class="ri-wallet-3-line"></i> Current Balance</div>
+    <div class="hb-amount">
+        <span class="currency">$</span><span class="counter" data-target="{{ profile.current_balance }}" data-decimals="2" data-prefix="">0.00</span>
+    </div>
+    <div class="hb-meta">
+        <span class="hm-item">Status: <strong>{% if profile.account_status == 'trading' %}<span class="text-emerald">Trading</span>{% else %}<span class="text-red">Not Trading</span>{% endif %}</strong></span>
+        <span class="hm-item">Referral: <strong class="mono">{{ profile.referral_id }}</strong></span>
+    </div>
+</section>
+
+<div class="stats-grid">
+    <div class="card stat-card emerald fade-in d1">
+        <div class="stat-top">
+            <span class="stat-label">Trading Balance</span>
+            <span class="stat-icon"><i class="ri-exchange-dollar-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ profile.trading_balance }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Available for active trading</div>
+    </div>
+
+    <div class="card stat-card gold fade-in d2">
+        <div class="stat-top">
+            <span class="stat-label">Total Deposits</span>
+            <span class="stat-icon"><i class="ri-arrow-down-circle-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ total_deposits }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">All approved deposits</div>
+    </div>
+
+    <div class="card stat-card blue fade-in d3">
+        <div class="stat-top">
+            <span class="stat-label">Active Holdings</span>
+            <span class="stat-icon"><i class="ri-funds-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ active_investments }}">0</span></div>
+        <div class="stat-foot">Plans currently running</div>
+    </div>
+</div>
+
+<div class="dashboard-actions fade-in d2">
+    <a href="{% url 'investments:landing' %}" class="dash-action invest">
+        <span class="da-icon"><i class="ri-funds-line"></i></span>
+        <span><span class="da-title">Hold Now</span><span class="da-sub">Browse premium plans</span></span>
+    </a>
+    <a href="{% url 'investments:flexible' %}" class="dash-action plans">
+        <span class="da-icon"><i class="ri-pie-chart-2-line"></i></span>
+        <span><span class="da-title">Flexible Plans</span><span class="da-sub">20 strategies to choose</span></span>
+    </a>
+    <a href="{% url 'withdrawals:request' %}" class="dash-action withdraw">
+        <span class="da-icon"><i class="ri-arrow-up-circle-line"></i></span>
+        <span><span class="da-title">Withdraw</span><span class="da-sub"> Smooth and secure</span></span>
+    </a>
+    <a href="{% url 'deposits:history' %}" class="dash-action deposit">
+        <span class="da-icon"><i class="ri-arrow-down-circle-line"></i></span>
+        <span><span class="da-title">Deposit History</span><span class="da-sub">Track your deposits</span></span>
+    </a>
+</div>
+
+{% if active_performances %}
+<div class="card fade-in d3">
+    <div class="card-title">
+        <h3>Active Holding Performance</h3>
+        <a href="{% url 'investments:mine' %}" class="btn btn-ghost btn-sm">View All <i class="ri-arrow-right-line"></i></a>
+    </div>
+    <div class="active-grid">
+        {% for inv in active_performances %}
+        <div class="perf-card">
+            <div class="perf-head">
+                <div>
+                    <div class="perf-name"><i class="ri-funds-line"></i> {{ inv.plan.name }}</div>
+                    <div class="perf-sub">{{ inv.plan.get_category_display }} · {{ inv.plan.duration_label }} · Day {{ inv.day_number }} of {{ inv.days_total }}</div>
+                </div>
+                <span class="badge badge-emerald">Active</span>
+            </div>
+            <div class="perf-numbers">
+                <div>
+                    <span class="perf-label">Held</span>
+                    <span class="perf-value">${{ inv.amount_invested|floatformat:2 }}</span>
+                </div>
+                <div>
+                    <span class="perf-label">Current Value</span>
+                    <span class="perf-value gold">${{ inv.current_value|floatformat:2 }}</span>
+                </div>
+                <div>
+                    <span class="perf-label">Maturity Payout</span>
+                    <span class="perf-value emerald">${{ inv.expected_return|floatformat:2 }}</span>
+                </div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" style="width: {{ inv.progress_pct }}%"></div>
+            </div>
+            <div class="perf-foot">
+                <span>{{ inv.progress_pct }}% complete</span>
+                <span>{{ inv.days_left }} day{{ inv.days_left|pluralize }} remaining · matures {{ inv.maturity_date|date:"M d, Y" }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card fade-in d4">
+    <div class="card-title">
+        <h3>Recent Transactions</h3>
+        <a href="{% url 'transactions:history' %}" class="btn btn-ghost btn-sm">View All <i class="ri-arrow-right-line"></i></a>
+    </div>
+    {% if transactions %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td>
+                        <div class="tx-cell">
+                            <span class="tx-icon {{ txn.type }}">
+                                {% if txn.type == 'deposit' %}<i class="ri-arrow-down-circle-line"></i>
+                                {% elif txn.type == 'withdrawal' %}<i class="ri-arrow-up-circle-line"></i>
+                                {% elif txn.type == 'investment' %}<i class="ri-funds-line"></i>
+                                {% else %}<i class="ri-line-chart-line"></i>{% endif %}
+                            </span>
+                            <span>
+                                <span class="tx-title">{{ txn.remarks|default:txn.get_type_display }}</span>
+                                <span class="tx-sub">{{ txn.transaction_id|slice:":8"|upper }}</span>
+                            </span>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-gray">{{ txn.get_type_display }}</span></td>
+                    <td class="{% if txn.type == 'withdrawal' %}amount-neg{% else %}amount-pos{% endif %}">
+                        {% if txn.type == 'withdrawal' %}-{% else %}+{% endif %}${{ txn.amount|floatformat:2 }}
+                    </td>
+                    <td>
+                        {% if txn.status == 'completed' %}<span class="badge badge-emerald">Completed</span>
+                        {% elif txn.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ txn.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-exchange-funds-line"></i></div>
+        <h4>No transactions yet</h4>
+        <p>Make your first deposit to start earning returns.</p>
+        <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-sm mt-3">Start Holding</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

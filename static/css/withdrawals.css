@@ -1,0 +1,66 @@
+/* ===== Withdrawals ===== */
+.withdraw-balance {
+    border-radius: var(--radius-lg);
+    padding: 1.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(59, 130, 246, 0.08) 50%, rgba(212, 175, 55, 0.08));
+    margin-bottom: 1.75rem;
+}
+
+.withdraw-balance .wb-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.withdraw-balance .wb-amount {
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin-top: 0.4rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.withdraw-balance .wb-amount .currency { color: var(--emerald-light); font-size: 1.3rem; }
+
+.withdraw-note {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-sm);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    font-size: 0.8rem;
+    color: #F87171;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.withdraw-note i { font-size: 1.1rem; margin-top: 2px; }
+
+.security-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-sm);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    margin-top: 0.4rem;
+}
+
+.security-row .sr-title { font-size: 0.84rem; font-weight: 600; }
+.security-row .sr-sub { font-size: 0.74rem; color: var(--text-muted); }
+
+.security-row input { accent-color: var(--emerald); width: 18px; height: 18px; cursor: pointer; }
+
+@media (max-width: 640px) {
+    .withdraw-balance .wb-amount { font-size: 2rem; }
+}

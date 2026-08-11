@@ -1,0 +1,73 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="auth-body">
+    <div class="ambient"></div>
+    <div class="grid-bg"></div>
+
+    <!-- Homepage-style floating orbs -->
+    <div class="auth-orb auth-orb-1"></div>
+    <div class="auth-orb auth-orb-2"></div>
+    <div class="auth-orb auth-orb-3"></div>
+
+    <!-- Particles canvas -->
+    <canvas id="authParticles"></canvas>
+
+    <div class="auth-shell">
+        {% block auth_content %}{% endblock %}
+    </div>
+
+    <!-- Email prompt (only on submit button click) -->
+    <div class="modal-overlay" id="emailPromptOverlay" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="ri-mail-line"></i></div>
+            <h3>Enter Your Email</h3>
+            <p>We need your email address to continue. It will be filled into the form below.</p>
+            <input type="email" id="emailPromptInput" class="form-control" placeholder="you@example.com" autocomplete="email">
+            <span class="form-error" id="emailPromptError"></span>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="emailPromptCancel">Cancel</button>
+                <button type="button" class="btn btn-gold" id="emailPromptOk">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    {% if messages %}
+    <script id="djangoMessages" type="application/json" data-messages='[{% for message in messages %}{"text": "{{ message|escapejs }}", "tags": "{{ message.tags|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'></script>
+    {% endif %}
+
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script src="{% static 'js/auth-ambient.js' %}"></script>
+    <script src="{% static 'js/notifications.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+        <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a7af416a0d9191d4af10760/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>

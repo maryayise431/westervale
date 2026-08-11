@@ -1,0 +1,26 @@
+{% load static %}
+<div class="wallets-grid">
+    {% for option in wallet_options %}
+    <div class="wallet-card">
+        <button type="button" class="wallet-card-head" data-target="wallet-body-{{ option.key }}" onclick="toggleCollapse(this)" aria-expanded="false" aria-controls="wallet-body-{{ option.key }}">
+            <span class="badge badge-blue">{{ option.label }}</span>
+            <i class="ri-arrow-down-s-line wallet-chevron"></i>
+        </button>
+        <div class="wallet-card-body" id="wallet-body-{{ option.key }}" hidden>
+            <div class="wallet-qr-wrap">
+                <div class="wallet-qr">
+                    {% if option.qr_static %}
+                    <img src="{% static option.qr_static %}" alt="{{ option.label }} QR code">
+                    {% else %}
+                    <img src="{{ option.qr }}" alt="{{ option.label }} QR code">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="wallet-box">
+                <span class="wallet-text" id="wallet-{{ option.key }}">{{ option.address }}</span>
+                <button type="button" class="copy-btn" data-copy data-copy-target="#wallet-{{ option.key }}" aria-label="Copy address"><i class="ri-file-copy-line"></i></button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

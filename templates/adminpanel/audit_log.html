@@ -1,0 +1,59 @@
+{% extends 'manager_base.html' %}
+{% block title %}Audit Log — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Audit Log{% endblock %}
+{% block page_subtitle %}A tamper-evident record of all sensitive admin actions.{% endblock %}
+
+{% block content %}
+<div class="card fade-in d1">
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Admin</th>
+                    <th>Action</th>
+                    <th>Target</th>
+                    <th>Field</th>
+                    <th>Change</th>
+                    <th>IP</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in page_obj %}
+                <tr>
+                    <td class="font-bold">{{ log.admin.username }}</td>
+                    <td><span class="badge badge-blue">{{ log.action }}</span></td>
+                    <td>{% if log.target_user %}{{ log.target_user.username }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    <td class="mono" style="font-size:0.76rem;">{{ log.field_changed|default:"—" }}</td>
+                    <td class="text-secondary" style="font-size:0.8rem; white-space:normal;">
+                        {% if log.old_value or log.new_value %}<span class="text-red">{{ log.old_value|truncatechars:24 }}</span> → <span class="text-emerald">{{ log.new_value|truncatechars:24 }}</span>{% else %}—{% endif %}
+                    </td>
+                    <td class="mono" style="font-size:0.76rem;">{{ log.ip_address|default:"—" }}</td>
+                    <td>{{ log.timestamp|date:"M d, Y H:i:s" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}<span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}" class="page-link">{{ num }}</a>{% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>{% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-file-list-3-line"></i></div>
+        <h4>No audit entries yet</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

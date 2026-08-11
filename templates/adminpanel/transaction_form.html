@@ -1,0 +1,74 @@
+{% extends 'manager_base.html' %}
+{% block title %}Transaction Editor — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Transaction Editor{% endblock %}
+{% block page_subtitle %}Create or edit ledger history.{% endblock %}
+
+{% block content %}
+<div class="card fade-in d1" style="max-width:760px;">
+    <div class="card-title">
+        <h3>{{ txn|yesno:"Edit Transaction,New Transaction" }}</h3>
+        <a href="{% url 'adminpanel:transaction_list' %}" class="btn btn-ghost btn-sm">Back to List</a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="id_user">User <span class="required">*</span></label>
+                <select id="id_user" name="user" class="form-control" required>
+                    <option value="">— Select user —</option>
+                    {% for u in users %}
+                    <option value="{{ u.pk }}" {% if selected_user_id == u.pk|stringformat:"s" or txn and txn.user_id == u.pk %}selected{% endif %}>
+                        {{ u.username }} (${{ u.profile.current_balance|floatformat:2 }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_type">Type <span class="required">*</span></label>
+                <select id="id_type" name="type" class="form-control" required>
+                    <option value="">— Select type —</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}" {% if txn and txn.type == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <span class="form-hint" id="typeHint">Records</span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="id_amount">Amount <span class="required">*</span></label>
+                <input type="number" step="0.01" min="0.01" id="id_amount" name="amount" value="{{ txn.amount|default_if_none:'' }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="id_status">Status</label>
+                <select id="id_status" name="status" class="form-control">
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if txn and txn.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_created_at">Date &amp; Time</label>
+            <input type="datetime-local" id="id_created_at" name="created_at" value="{{ txn.created_at|date:'Y-m-d\TH:i' }}" class="form-control">
+            <span class="form-hint">Leave blank to use now.</span>
+        </div>
+
+        <div class="flex flex-gap">
+            <button type="submit" class="btn btn-gold">{{ txn|yesno:"Save Changes,Create Transaction" }}</button>
+            {% if txn %}
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteForm').submit()"><i class="ri-delete-bin-line"></i> Delete</button>
+            {% endif %}
+            <a href="{% url 'adminpanel:transaction_list' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+
+    {% if txn %}
+    <form method="post" action="{% url 'adminpanel:transaction_delete' txn.pk %}" id="deleteForm" style="display:none;">
+        {% csrf_token %}
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

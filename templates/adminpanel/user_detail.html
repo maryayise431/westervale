@@ -1,0 +1,164 @@
+{% extends 'manager_base.html' %}
+{% block title %}Manage {{ target.username }} — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}User Management{% endblock %}
+{% block page_subtitle %}Manage balances and account status.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="flex" style="align-items:center;gap:1rem;">
+        <span class="avatar" style="width:52px;height:52px;font-size:1.1rem;">{% if target.profile.profile_picture %}<img src="{{ target.profile.profile_picture.url }}" alt="{{ target.username }}">{% else %}{{ target.username|slice:":2"|upper }}{% endif %}</span>
+        <div>
+            <h2>{{ target.get_full_name|default:target.username }}</h2>
+            <p>{{ target.email|default:"no email" }} · {{ target.profile.referral_id }}</p>
+        </div>
+    </div>
+    <div class="actions">
+        <form method="post" action="{% url 'adminpanel:user_toggle_status' target.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn {% if target.profile.account_status == 'trading' %}btn-danger{% else %}btn-emerald{% endif %}">
+                {% if target.profile.account_status == 'trading' %}<i class="ri-pause-circle-line"></i> Set Not Trading{% else %}<i class="ri-play-circle-line"></i> Set Trading{% endif %}
+            </button>
+        </form>
+        <a href="{% url 'adminpanel:user_list' %}" class="btn btn-ghost">Back to Users</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div>
+        <div class="card fade-in d1">
+            <div class="card-title">
+                <h3>Account Controls</h3>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="id_current_balance">Current Balance</label>
+                        <input type="number" step="0.01" id="id_current_balance" name="current_balance" value="{{ target.profile.current_balance }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_trading_balance">Trading Balance</label>
+                        <input type="number" step="0.01" id="id_trading_balance" name="trading_balance" value="{{ target.profile.trading_balance }}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_account_status">Account Status</label>
+                    <select id="id_account_status" name="account_status" class="form-control">
+                        <option value="trading" {% if target.profile.account_status == 'trading' %}selected{% endif %}>Trading</option>
+                        <option value="not_trading" {% if target.profile.account_status == 'not_trading' %}selected{% endif %}>Not Trading</option>
+                    </select>
+                </div>
+                <div class="stats-grid" style="margin-bottom:0;">
+                    <div class="card stat-card gold" style="padding:1rem;">
+                        <div class="stat-top">
+                            <span class="stat-label">Total Balance</span>
+                        </div>
+                        <div class="stat-value" style="font-size:1.4rem;">${{ target.profile.total_balance|floatformat:2 }}</div>
+                    </div>
+                    <div class="card stat-card blue" style="padding:1rem;">
+                        <div class="stat-top">
+                            <span class="stat-label">Referrals</span>
+                        </div>
+                        <div class="stat-value" style="font-size:1.4rem;">{{ target.profile.referrals.count }}</div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-gold btn-block mt-3">Save Changes <i class="ri-save-3-line"></i></button>
+            </form>
+        </div>
+
+        <div class="card fade-in d2" style="margin-top:1.5rem;">
+            <div class="card-title">
+                <h3>Password</h3>
+            </div>
+            <div class="form-hint">
+                <i class="ri-eye-line"></i>
+                Current password: <strong>{{ target.plain_password|default:"(not recorded)" }}</strong>
+            </div>
+        </div>
+
+        <div class="card fade-in d2" style="margin-top:1.5rem;">
+            <div class="card-title">
+                <h3>Profile Details</h3>
+            </div>
+            <div class="flex" style="align-items:center;gap:1rem;margin-bottom:1.25rem;">
+                <span class="avatar" style="width:48px;height:48px;font-size:1rem;">{% if target.profile.profile_picture %}<img src="{{ target.profile.profile_picture.url }}" alt="{{ target.username }}">{% else %}{{ target.username|slice:":2"|upper }}{% endif %}</span>
+                <div>
+                    <strong>{{ target.get_full_name|default:target.username }}</strong>
+                    <p class="text-muted" style="font-size:0.8rem;margin:0;">Member since {{ target.date_joined|date:"M j, Y" }}</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <span class="form-label">Phone</span>
+                    <p style="margin:0.35rem 0 0;">{{ target.profile.phone|default:"—" }}</p>
+                </div>
+                <div class="form-group">
+                    <span class="form-label">City</span>
+                    <p style="margin:0.35rem 0 0;">{{ target.profile.city|default:"—" }}</p>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <span class="form-label">Country</span>
+                    <p style="margin:0.35rem 0 0;">{{ target.profile.country|default:"—" }}</p>
+                </div>
+                <div class="form-group">
+                    <span class="form-label">Occupation</span>
+                    <p style="margin:0.35rem 0 0;">{{ target.profile.occupation|default:"—" }}</p>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <span class="form-label">Address</span>
+                <p style="margin:0.35rem 0 0;">{{ target.profile.address|default:"—" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="card fade-in d2 mb-3">
+            <div class="card-title">
+                <h3>Recent Transactions</h3>
+            </div>
+            {% if transactions %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th>Type</th><th>Amount</th><th>Date</th></tr></thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td><span class="badge badge-gray">{{ t.get_type_display }}</span></td>
+                            <td class="{% if t.type == 'withdrawal' %}amount-neg{% else %}amount-pos{% endif %}">${{ t.amount|floatformat:2 }}</td>
+                            <td>{{ t.created_at|date:"M d" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}<div class="empty-state" style="padding:1.2rem;"><h4>No transactions</h4></div>{% endif %}
+        </div>
+
+        <div class="card fade-in d3">
+            <div class="card-title">
+                <h3>Holdings</h3>
+            </div>
+            {% if investments %}
+            <div class="table-wrap">
+                <table class="table">
+                    <thead><tr><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for i in investments %}
+                        <tr>
+                            <td>{{ i.plan.name }}</td>
+                            <td class="amount-neu">${{ i.amount_invested|floatformat:2 }}</td>
+                            <td><span class="badge badge-gray">{{ i.get_status_display }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}<div class="empty-state" style="padding:1.2rem;"><h4>No holdings</h4></div>{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

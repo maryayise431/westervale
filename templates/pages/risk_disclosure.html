@@ -1,0 +1,51 @@
+{% extends 'pages/base_page.html' %}
+{% block title %}Risk Disclosure — {{ SITE_NAME }}{% endblock %}
+{% block hero_icon %}<i class="ri-alert-line"></i>{% endblock %}
+{% block page_title %}Risk Disclosure{% endblock %}
+{% block page_lead %}Important information about the risks involved in holding. Please read carefully before committing funds.{% endblock %}
+
+{% block content %}
+<section class="content-section prose">
+    <span class="update-note">Last updated: August 2026</span>
+
+    <div class="risk-note">
+        <strong>Important:</strong> All holdings carry risk. The value of holdings can fall as well as rise, and you may get back less than you held. Past performance is not a reliable indicator of future results.
+    </div>
+
+    <h2>1. General Holding Risk</h2>
+    <p>All holding products carry the risk of losing some or all of your capital. Projected returns are estimates based on stated parameters and are never guaranteed.</p>
+
+    <h2>2. Market Risk</h2>
+    <p>Market prices fluctuate due to economic conditions, political events, interest rates, and other factors beyond our control. These fluctuations affect the value of your holdings in real time.</p>
+
+    <h2>3. Stock-Class Specific Risks</h2>
+    <ul>
+        <li><strong>Cryptocurrency:</strong> Highly volatile. Prices can change dramatically in short periods and are subject to regulatory change.</li>
+        <li><strong>Forex:</strong> Leveraged trading can magnify losses. You may lose more than your initial holding.</li>
+        <li><strong>Gold & Metals:</strong> Prices fluctuate with market conditions, and mining equities can underperform the underlying metal.</li>
+        <li><strong>Real Estate:</strong> Relatively illiquid. Development projects involve longer time horizons and higher risk.</li>
+        <li><strong>Stocks:</strong> Stock prices fluctuate with market conditions. Growth stocks are more volatile, and dividend growers can lag when rates rise.</li>
+    </ul>
+
+    <h2>4. Liquidity Risk</h2>
+    <p>Some holdings cannot be sold or converted to cash quickly. Funds committed to a plan remain in your trading balance until the plan matures and the return is credited back to your available balance.</p>
+
+    <h2>5. Regulatory Risk</h2>
+    <p>Laws and regulations governing digital stocks, securities, and holding services can change and may affect the availability or value of certain products.</p>
+
+    <h2>6. Our Role</h2>
+    <p>Westervale Capital provides access to holding products and management services. We do not provide personalized financial advice unless explicitly agreed, and nothing on this platform should be construed as holding advice.</p>
+
+    <h2>7. Suitability</h2>
+    <p>You are responsible for ensuring that any holding you make is suitable for your financial situation, experience, and risk tolerance. When in doubt, consult an independent financial adviser.</p>
+</section>
+
+<div class="asset-cta">
+    <h3>Hold responsibly</h3>
+    <p>Only hold money you can afford to lose, and build an allocation that fits your goals.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'public_investments' %}" class="btn btn-primary">Browse Holdings <i class="ri-arrow-right-line"></i></a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline">Create Account</a>
+    </div>
+</div>
+{% endblock %}

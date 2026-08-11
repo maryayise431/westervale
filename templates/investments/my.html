@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Holdings — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/investments.css' %}">
+{% endblock %}
+
+{% block page_title %}My Holdings{% endblock %}
+{% block page_subtitle %}Track the performance of every plan you've funded.{% endblock %}
+
+{% block content %}
+<div class="tabs">
+    <a href="{% url 'investments:landing' %}" class="tab-link">Overview</a>
+    <a href="{% url 'investments:periodic' %}" class="tab-link">Periodic</a>
+    <a href="{% url 'investments:flexible' %}" class="tab-link">Flexible</a>
+    <a href="{% url 'investments:mine' %}" class="tab-link active">My Holdings</a>
+</div>
+
+<div class="stats-grid">
+    <div class="card stat-card gold fade-in d1">
+        <div class="stat-top">
+            <span class="stat-label">Total Held</span>
+            <span class="stat-icon"><i class="ri-funds-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ total_invested|default:0 }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Across all non-cancelled plans</div>
+    </div>
+    <div class="card stat-card emerald fade-in d2">
+        <div class="stat-top">
+            <span class="stat-label">Expected Return</span>
+            <span class="stat-icon"><i class="ri-line-chart-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ expected_return|default:0 }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Principal + projected profit</div>
+    </div>
+    <div class="card stat-card blue fade-in d3">
+        <div class="stat-top">
+            <span class="stat-label">Active Plans</span>
+            <span class="stat-icon"><i class="ri-vip-diamond-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="counter" data-target="{{ active_count|default:0 }}">0</span></div>
+        <div class="stat-foot">Currently running</div>
+    </div>
+</div>
+
+{% if active_investments %}
+<div class="card fade-in">
+    <div class="card-title">
+        <h3>Active Holding Performance</h3>
+        <span class="sub">{{ active_investments|length }} plan{{ active_investments|length|pluralize }} running</span>
+    </div>
+    <div class="active-grid">
+        {% for inv in active_investments %}
+        <div class="perf-card">
+            <div class="perf-head">
+                <div>
+                    <div class="perf-name"><i class="ri-funds-line"></i> {{ inv.plan.name }}</div>
+                    <div class="perf-sub">{{ inv.plan.get_category_display }} · {{ inv.plan.duration_label }} · Day {{ inv.day_number }} of {{ inv.days_total }}</div>
+                </div>
+                <span class="badge badge-emerald">Active</span>
+            </div>
+            <div class="perf-numbers">
+                <div>
+                    <span class="perf-label">Held</span>
+                    <span class="perf-value">${{ inv.amount_invested|floatformat:2 }}</span>
+                </div>
+                <div>
+                    <span class="perf-label">Current Value</span>
+                    <span class="perf-value gold">${{ inv.current_value|floatformat:2 }}</span>
+                </div>
+                <div>
+                    <span class="perf-label">Maturity Payout</span>
+                    <span class="perf-value emerald">${{ inv.expected_return|floatformat:2 }}</span>
+                </div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" style="width: {{ inv.progress_pct }}%"></div>
+            </div>
+            <div class="perf-foot">
+                <span>{{ inv.progress_pct }}% complete</span>
+                <span>{{ inv.days_left }} day{{ inv.days_left|pluralize }} remaining · matures {{ inv.maturity_date|date:"M d, Y" }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card fade-in d3">
+    <div class="card-title">
+        <h3>Holding History</h3>
+        <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-sm">Hold More <i class="ri-arrow-right-line"></i></a>
+    </div>
+    {% if investments %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Plan</th>
+                    <th>Held</th>
+                    <th>Current Value</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Maturity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in investments %}
+                <tr>
+                    <td>
+                        <div class="tx-cell">
+                            <span class="tx-icon investment"><i class="ri-funds-line"></i></span>
+                            <span>
+                                <span class="tx-title">{{ inv.plan.name }}</span>
+                                <span class="tx-sub">{{ inv.plan.get_category_display }} · {{ inv.plan.duration_label }}</span>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="amount-neu">${{ inv.amount_invested|floatformat:2 }}</td>
+                    <td class="amount-pos">${{ inv.current_value|floatformat:2 }}</td>
+                    <td>
+                        {% if inv.status == 'active' %}<span class="badge badge-emerald">Active</span>
+                        {% elif inv.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% elif inv.status == 'completed' %}<span class="badge badge-blue">Completed</span>
+                        {% else %}<span class="badge badge-red">Cancelled</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if inv.status == 'active' %}
+                        <div class="perf-table-cell">
+                            <div class="progress progress-sm"><div class="progress-bar" style="width: {{ inv.progress_pct }}%"></div></div>
+                            <span class="perf-sub">Day {{ inv.day_number }} of {{ inv.days_total }} · {{ inv.progress_pct }}%</span>
+                        </div>
+                        {% elif inv.status == 'completed' %}
+                        <span class="perf-sub">100%</span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if inv.maturity_date %}{{ inv.maturity_date|date:"M d, Y" }}
+                        {% else %}<span class="text-muted">—</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-vip-diamond-line"></i></div>
+        <h4>No holdings yet</h4>
+        <p>Choose a plan to start growing your capital today.</p>
+        <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-sm mt-3">Explore Plans</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

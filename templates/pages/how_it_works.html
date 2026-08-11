@@ -1,0 +1,75 @@
+{% extends 'pages/base_page.html' %}
+{% block title %}How It Works — {{ SITE_NAME }}{% endblock %}
+{% block hero_icon %}<i class="ri-graduation-cap-line"></i>{% endblock %}
+{% block page_title %}How It Works{% endblock %}
+{% block page_lead %}A straightforward onboarding process designed to get you held without confusion.{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Getting Started in Four Steps</h2>
+    <div class="steps-list">
+        <div class="step">
+            <span class="step-num">01</span>
+            <div class="step-icon"><i class="ri-user-add-line"></i></div>
+            <h4>Create Account</h4>
+            <p>Sign up with your email and complete identity verification as required by local regulation.</p>
+        </div>
+        <div class="step">
+            <span class="step-num">02</span>
+            <div class="step-icon"><i class="ri-wallet-3-line"></i></div>
+            <h4>Fund Your Account</h4>
+            <p>Add funds to your available balance, then choose the plan you want to hold in.</p>
+        </div>
+        <div class="step">
+            <span class="step-num">03</span>
+            <div class="step-icon"><i class="ri-compass-3-line"></i></div>
+            <h4>Choose Your Strategy</h4>
+            <p>Select a stock class, or discuss a suitable allocation with your advisor.</p>
+        </div>
+        <div class="step">
+            <span class="step-num">04</span>
+            <div class="step-icon"><i class="ri-line-chart-line"></i></div>
+            <h4>Track & Review</h4>
+            <p>Monitor performance with clear reporting and adjust your strategy as goals evolve.</p>
+        </div>
+    </div>
+</section>
+
+<section class="content-section">
+    <h2>What Happens After You Hold</h2>
+    <p>Once you fund a plan from your balance, the held amount is moved into your trading balance and your plan starts running immediately. Your dashboard and My Holdings page show live performance for every active plan:</p>
+    <ul>
+        <li><strong>Progress bar</strong> — elapsed vs. total duration, with the current day ("Day X of Y").</li>
+        <li><strong>Current Value</strong> — your projected position as it grows linearly toward the maturity payout.</li>
+        <li><strong>Maturity Payout</strong> — the full expected return including principal and projected profit.</li>
+    </ul>
+    <p>On the maturity date the return is credited back to your available balance automatically and recorded in your transaction history.</p>
+</section>
+
+<section class="content-section">
+    <h2>Key Things to Know</h2>
+    <div class="content-grid">
+        <div class="content-card">
+            <h3>Minimums Are Low</h3>
+            <p>Plans start from just $300, so every budget can build exposure across multiple stock classes.</p>
+        </div>
+        <div class="content-card">
+            <h3>Fees Are Transparent</h3>
+            <p>All fees are published up front. There are no hidden charges or surprise deductions.</p>
+        </div>
+        <div class="content-card">
+            <h3>Support Is Always On</h3>
+            <p>24/7 support with advisors available by chat, phone, and video whenever you need them.</p>
+        </div>
+    </div>
+</section>
+
+<div class="asset-cta">
+    <h3>Ready when you are</h3>
+    <p>Open an account in minutes and get a clear picture of your holdings.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Create Account <i class="ri-arrow-right-line"></i></a>
+        <a href="{% url 'public_investments' %}" class="btn btn-outline">Browse Holdings</a>
+    </div>
+</div>
+{% endblock %}

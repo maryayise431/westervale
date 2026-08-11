@@ -1,0 +1,88 @@
+{% extends 'manager_base.html' %}
+{% block title %}Deposit Management — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Deposit Management{% endblock %}
+{% block page_subtitle %}Review, approve or reject user deposits.{% endblock %}
+
+{% block content %}
+<div class="tabs">
+    <a href="{% url 'adminpanel:deposit_list' %}?status=pending" class="tab-link {% if status == 'pending' %}active{% endif %}">Pending</a>
+    <a href="{% url 'adminpanel:deposit_list' %}?status=approved" class="tab-link {% if status == 'approved' %}active{% endif %}">Approved</a>
+    <a href="{% url 'adminpanel:deposit_list' %}?status=rejected" class="tab-link {% if status == 'rejected' %}active{% endif %}">Rejected</a>
+    <a href="{% url 'adminpanel:deposit_list' %}" class="tab-link {% if not status %}active{% endif %}">All</a>
+</div>
+
+<div style="display:flex;justify-content:flex-end;margin:1rem 0;">
+    <form method="get">
+        <input type="hidden" name="status" value="{{ status }}">
+        <select name="sort" class="form-control" style="width:auto;display:inline-block;" onchange="this.form.submit()" aria-label="Sort deposits">
+            <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+            <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+            <option value="amount_high" {% if sort == 'amount_high' %}selected{% endif %}>Highest amount</option>
+            <option value="amount_low" {% if sort == 'amount_low' %}selected{% endif %}>Lowest amount</option>
+        </select>
+    </form>
+</div>
+
+<div class="card fade-in d1">
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ref</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Proof</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in page_obj %}
+                <tr>
+                    <td class="mono">{{ d.reference|default:"—" }}</td>
+                    <td class="font-bold">{{ d.user.username }}</td>
+                    <td class="amount-pos">${{ d.amount|floatformat:2 }}</td>
+                    <td>
+                        {% if d.payment_proof %}
+                        <a href="{{ d.payment_proof.url }}" target="_blank" class="btn btn-outline btn-sm"><i class="ri-image-line"></i> View</a>
+                        {% else %}<span class="text-muted">None</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if d.status == 'approved' %}<span class="badge badge-emerald">Approved</span>
+                        {% elif d.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ d.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if d.status == 'pending' %}
+                        <a href="{% url 'adminpanel:deposit_detail' d.pk %}" class="btn btn-sm btn-outline"><i class="ri-eye-line"></i> Review</a>
+                        {% else %}<span class="text-muted" style="font-size:0.78rem;">{{ d.reviewed_at|date:"M d" }}</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}<span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}<a href="?page={{ num }}&status={{ status }}&sort={{ sort }}" class="page-link">{{ num }}</a>{% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>{% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-arrow-down-circle-line"></i></div>
+        <h4>No deposits in this view</h4>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

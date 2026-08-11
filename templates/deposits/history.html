@@ -1,0 +1,108 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Deposit History — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deposits.css' %}">
+{% endblock %}
+
+{% block page_title %}Deposits{% endblock %}
+{% block page_subtitle %}All your deposit activity in one place.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Deposit History</h2>
+        <p>Every deposit you've made and its verification status.</p>
+    </div>
+    <div class="actions">
+        <a href="{% url 'investments:periodic' %}" class="btn btn-outline">Periodic Plans</a>
+    </div>
+</div>
+
+<div class="deposit-list fade-in d1">
+    <div class="deposit-item wallets-card open">
+        <button type="button" class="deposit-item-head" data-target="deposit-wallets-body" onclick="toggleCollapse(this)" aria-expanded="true" aria-controls="deposit-wallets-body">
+            <span class="tx-icon deposit"><i class="ri-bank-card-line"></i></span>
+            <span class="deposit-id">
+                <span class="di-title">Deposit Wallets</span>
+                <span class="di-sub">Send funds to any of these addresses, then upload your proof</span>
+            </span>
+            <i class="ri-arrow-down-s-line deposit-chevron"></i>
+        </button>
+
+        <div class="deposit-item-body" id="deposit-wallets-body">
+            {% include 'deposits/_wallet_cards.html' %}
+            <div class="wallet-caution mt-2">
+                <i class="ri-alert-line"></i>
+                <span>Only send the matching stock to each address. Sending any other stock may result in permanent loss of funds. Double-check the address before confirming.</span>
+            </div>
+        </div>
+    </div>
+
+    {% if deposits %}
+        {% for deposit in deposits %}
+        <details class="deposit-item" {% if forloop.first %}open{% endif %}>
+            <summary class="deposit-item-head">
+                <span class="tx-icon deposit"><i class="ri-arrow-down-circle-line"></i></span>
+                <span class="deposit-id">
+                    <span class="di-title">Deposit {{ deposit.reference|default:deposit.pk }}</span>
+                    <span class="di-sub">{{ deposit.investment.plan.name|default:"—" }}</span>
+                </span>
+                <span class="deposit-amount amount-pos">${{ deposit.amount|floatformat:2 }}</span>
+                <span class="deposit-status">
+                    {% if deposit.status == 'approved' %}<span class="badge badge-emerald">Approved</span>
+                    {% elif deposit.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                    {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                </span>
+                <span class="deposit-date text-muted">{{ deposit.created_at|date:"M d, Y H:i" }}</span>
+                <i class="ri-chevron-down-line deposit-chevron"></i>
+            </summary>
+
+            <div class="deposit-item-body">
+                <div class="deposit-wallet">
+                    <div class="wallet-qr-wrap">
+                        <div class="wallet-qr">
+                            {% if deposit.qr_uri %}
+                            <img src="{{ deposit.qr_uri }}" alt="Wallet address QR code">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="deposit-wallet-info">
+                        <label class="form-label">Deposit Wallet Address</label>
+                        <div class="wallet-box">
+                            <span class="wallet-text" id="wallet-{{ deposit.pk }}">{{ deposit.wallet_address_sent_to|default:"Address not recorded" }}</span>
+                            {% if deposit.wallet_address_sent_to %}
+                            <button type="button" class="copy-btn" data-copy data-copy-target="#wallet-{{ deposit.pk }}" aria-label="Copy address"><i class="ri-file-copy-line"></i></button>
+                            {% endif %}
+                        </div>
+                        {% if deposit.transaction_hash %}
+                        <label class="form-label">Transaction Hash</label>
+                        <div class="wallet-box hash-box">
+                            <span class="wallet-text">{{ deposit.transaction_hash }}</span>
+                        </div>
+                        {% endif %}
+                        {% if deposit.notes %}
+                        <p class="text-muted" style="font-size:0.82rem; margin-top:0.6rem;"><i class="ri-sticky-note-line"></i> {{ deposit.notes }}</p>
+                        {% endif %}
+                        <div class="deposit-actions mt-2">
+                            <a href="{% url 'deposits:detail' deposit.pk %}" class="btn btn-ghost btn-sm">View Details</a>
+                            {% if deposit.status == 'pending' and not deposit.payment_proof %}
+                            <a href="{% url 'deposits:confirm' deposit.pk %}" class="btn btn-gold btn-sm">Upload Proof</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+        {% endfor %}
+    {% else %}
+    <div class="card empty-state">
+        <div class="icon"><i class="ri-arrow-down-circle-line"></i></div>
+        <h4>No deposits yet</h4>
+        <p>Choose a holding plan and make your first deposit.</p>
+        <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-sm mt-3">Explore Plans</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

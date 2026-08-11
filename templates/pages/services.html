@@ -1,0 +1,70 @@
+{% extends 'pages/base_page.html' %}
+{% block title %}Services — {{ SITE_NAME }}{% endblock %}
+{% block hero_icon %}<i class="ri-stack-line"></i>{% endblock %}
+{% block page_title %}Services{% endblock %}
+{% block page_lead %}End-to-end wealth management services powered by technology and a dedicated team of holding professionals.{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>What We Offer</h2>
+    <div class="content-grid">
+        <div class="content-card">
+            <div class="icon"><i class="ri-pie-chart-2-line"></i></div>
+            <h3>Holdings Management</h3>
+            <p>Professionally managed holdings continuously reviewed to reflect your goals, risk profile, and market conditions.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-exchange-funds-line"></i></div>
+            <h3>Automated Trading</h3>
+            <p>Rules-based strategies execute on your behalf across supported venues, with full transparency into every position.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-shield-check-line"></i></div>
+            <h3>Risk Management</h3>
+            <p>Stop-losses, diversification, and stress testing help keep positions aligned with your risk tolerance.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-bar-chart-box-line"></i></div>
+            <h3>Data-Driven Insights</h3>
+            <p>Analytical tools help you understand markets and evaluate opportunities on your own terms.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-customer-service-2-line"></i></div>
+            <h3>Advisory & Support</h3>
+            <p>Advisors available via chat, phone, and video whenever you need them — from your first deposit to every maturity payout.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-money-dollar-circle-line"></i></div>
+            <h3>Multi-Currency Accounts</h3>
+            <p>Deposit, hold, and withdraw in multiple currencies with clear, published fee structures.</p>
+        </div>
+    </div>
+</section>
+
+<section class="content-section">
+    <h2>How We Serve You</h2>
+    <div class="content-grid">
+        <div class="content-card">
+            <h3>Personal Onboarding</h3>
+            <p>We take the time to understand your goals, experience, and risk tolerance before recommending any allocation.</p>
+        </div>
+        <div class="content-card">
+            <h3>Ongoing Review</h3>
+            <p>Your holdings are reviewed regularly and rebalanced when your goals or market conditions change.</p>
+        </div>
+        <div class="content-card">
+            <h3>Transparent Reporting</h3>
+            <p>Clear, plain-English reports show exactly how every plan is performing — including live progress toward maturity.</p>
+        </div>
+    </div>
+</section>
+
+<div class="asset-cta">
+    <h3>Talk to an advisor</h3>
+    <p>Get a suitable allocation built around your goals and risk tolerance.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Create Account <i class="ri-arrow-right-line"></i></a>
+        <a href="{% url 'how_it_works' %}" class="btn btn-outline">How It Works</a>
+    </div>
+</div>
+{% endblock %}

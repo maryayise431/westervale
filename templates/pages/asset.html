@@ -1,0 +1,66 @@
+{% extends 'pages/base_page.html' %}
+{% block title %}{{ asset.name }} — {{ SITE_NAME }}{% endblock %}
+{% block hero_icon %}<i class="{{ asset.icon }}"></i>{% endblock %}
+{% block page_title %}{{ asset.name }}{% endblock %}
+{% block page_lead %}{{ asset.tagline }}{% endblock %}
+
+{% block content %}
+<section class="asset-hero">
+    <h2>Why {{ asset.name }}?</h2>
+    <p>{{ asset.description }}</p>
+</section>
+
+<section class="content-section">
+    <h2 style="text-align:center;">Key Strategies</h2>
+    <div class="content-grid">
+        {% for strategy in asset.strategies %}
+        <div class="content-card">
+            <div class="icon"><i class="{{ strategy.icon }}"></i></div>
+            <h3>{{ strategy.title }}</h3>
+            <p>{{ strategy.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="content-section">
+    <h2 style="text-align:center;">What You Get</h2>
+    <div class="asset-facts">
+        {% for title, text in asset.facts %}
+        <div class="asset-fact">
+            <div class="af-title"><i class="ri-checkbox-circle-line"></i> {{ title }}</div>
+            <p>{{ text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="content-section">
+    <h2 style="text-align:center;">Explore Other Stock Classes</h2>
+    <div class="content-grid">
+        {% for other in assets %}
+        {% if other.slug != asset.slug %}
+        <a href="{{ other.url }}" class="investment-index-card">
+            <div class="icon"><i class="{{ other.icon }}"></i></div>
+            <h3>{{ other.name }}</h3>
+            <p>{{ other.tagline }}</p>
+            <span class="card-link">View <i class="ri-arrow-right-line"></i></span>
+        </a>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<div class="risk-note">
+    <strong>Risk disclosure:</strong> {{ asset.risk }}
+</div>
+
+<div class="asset-cta">
+    <h3>Interested in {{ asset.name }}?</h3>
+    <p>Talk to an advisor about a suitable allocation for your goals.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Create Account <i class="ri-arrow-right-line"></i></a>
+        <a href="{% url 'how_it_works' %}" class="btn btn-outline">How It Works</a>
+    </div>
+</div>
+{% endblock %}

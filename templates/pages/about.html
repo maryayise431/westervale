@@ -1,0 +1,59 @@
+{% extends 'pages/base_page.html' %}
+{% block title %}About Us — {{ SITE_NAME }}{% endblock %}
+{% block hero_icon %}<i class="ri-user-3-line"></i>{% endblock %}
+{% block page_title %}About Us{% endblock %}
+{% block page_lead %}World-class holding should not be a privilege of the wealthy. Westervale Capital combines institutional-style infrastructure with an accessible, transparent platform.{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Our Story</h2>
+    <p>Westervale Capital was built on a simple belief: every holder deserves clarity, security, and honest communication. We started with the goal of removing the opacity that has long surrounded wealth management, and we have grown into a platform that serves holders across multiple stock classes and geographies.</p>
+    <p>We focus on clear reporting, transparent fee structures, and dedicated advisors who put your goals first. From your first deposit to every maturity payout, you always know exactly where your money is and what it is doing.</p>
+</section>
+
+<section class="content-section">
+    <h2>What We Stand For</h2>
+    <div class="content-grid">
+        <div class="content-card">
+            <div class="icon"><i class="ri-shield-check-line"></i></div>
+            <h3>Security</h3>
+            <p>Bank-grade custody, encryption, and multi-signature protection keep your stocks safe using standards common in global financial services.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-file-chart-line"></i></div>
+            <h3>Transparency</h3>
+            <p>Every fee, strategy, and position is disclosed up front. If it matters to your money, you can see it.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-user-3-line"></i></div>
+            <h3>Guidance</h3>
+            <p>Dedicated advisors are available on every account, helping you build an allocation that reflects your risk tolerance and goals.</p>
+        </div>
+        <div class="content-card">
+            <div class="icon"><i class="ri-global-line"></i></div>
+            <h3>Global Access</h3>
+            <p>Hold across international markets from a single account with multi-currency support.</p>
+        </div>
+    </div>
+</section>
+
+<section class="content-section">
+    <h2>Why Holders Choose Us</h2>
+    <ul>
+        <li>Five stock classes — digital assets, currencies, metals, property, and stocks — on one platform.</li>
+        <li>Professional holdings management with continuous review against your goals and risk profile.</li>
+        <li>Rules-based trading strategies with fully disclosed logic.</li>
+        <li>Regular, plain-English reporting on every plan you fund.</li>
+        <li>24/7 client support with advisors available by chat, phone, and video.</li>
+    </ul>
+</section>
+
+<div class="asset-cta">
+    <h3>Let's build your future together</h3>
+    <p>Talk to our team about what Westervale Capital can do for your holdings.</p>
+    <div class="hero-buttons">
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Create Account <i class="ri-arrow-right-line"></i></a>
+        <a href="{% url 'services' %}" class="btn btn-outline">Explore Services</a>
+    </div>
+</div>
+{% endblock %}

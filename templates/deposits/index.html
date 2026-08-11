@@ -1,0 +1,96 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Deposit — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deposits.css' %}">
+{% endblock %}
+
+{% block page_title %}Deposits{% endblock %}
+{% block page_subtitle %}Fund your account and submit your payment proof.{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Make a Deposit</h2>
+        <p>Send funds to any wallet below, then submit the amount and proof of transfer.</p>
+    </div>
+    <div class="actions">
+        <a href="{% url 'deposits:history' %}" class="btn btn-outline">Deposit History</a>
+    </div>
+</div>
+
+<div class="deposit-list fade-in d1">
+    <div class="deposit-item wallets-card open">
+        <button type="button" class="deposit-item-head" data-target="deposit-wallets-body" onclick="toggleCollapse(this)" aria-expanded="true" aria-controls="deposit-wallets-body">
+            <span class="tx-icon deposit"><i class="ri-bank-card-line"></i></span>
+            <span class="deposit-id">
+                <span class="di-title">Deposit Wallets</span>
+                <span class="di-sub">Send funds to any of these addresses, then submit your proof below</span>
+            </span>
+            <i class="ri-arrow-down-s-line deposit-chevron"></i>
+        </button>
+
+        <div class="deposit-item-body" id="deposit-wallets-body">
+            {% include 'deposits/_wallet_cards.html' %}
+            <div class="wallet-caution mt-2">
+                <i class="ri-alert-line"></i>
+                <span>Only send the matching stock to each address. Sending any other stock may result in permanent loss of funds. Double-check the address before confirming.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card fade-in d2 mt-3">
+    <div class="card-title">
+        <h3><i class="ri-upload-cloud-2-line" style="color:var(--gold-light);"></i> Submit Deposit</h3>
+        <span class="badge badge-amber">Pending Verification</span>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="depositForm">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label" for="walletAsset">Sent To (Stock)</label>
+            <select id="walletAsset" name="wallet_asset" class="form-control">
+                {% for option in wallet_options %}
+                <option value="{{ option.key }}" {% if forloop.first %}selected{% endif %}>{{ option.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="amount">Amount Sent <span class="required">*</span></label>
+            <div class="amount-input-wrap">
+                <span class="amount-prefix">$</span>
+                <input type="number" id="amount" name="amount" class="form-control" min="1" step="0.01" placeholder="e.g. 500.00" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="paymentProof">Payment Proof <span class="required">*</span></label>
+            <label class="proof-drop" for="paymentProof" id="proofDrop">
+                <div class="pd-icon"><i class="ri-image-add-line"></i></div>
+                <h4>Click to upload or drag &amp; drop</h4>
+                <p>PNG, JPG or WEBP · Max 5MB</p>
+                <span class="proof-browse-btn"><i class="ri-upload-2-line"></i> Browse Files</span>
+                <input type="file" id="paymentProof" name="payment_proof" accept="image/*" class="proof-input" required>
+            </label>
+            <div class="proof-preview" id="proofPreview" style="display:none;">
+                <img src="" alt="Payment proof preview">
+                <button type="button" class="proof-remove" id="proofRemove" aria-label="Remove image"><i class="ri-close-line"></i></button>
+            </div>
+            <span class="form-hint">Upload a clear screenshot showing the transaction from your wallet.</span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="notes">Notes (Optional)</label>
+            <textarea id="notes" name="notes" class="form-control" placeholder="Anything we should know?"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold btn-lg btn-block">
+            Submit Deposit <i class="ri-shield-check-line"></i>
+        </button>
+    </form>
+</div>
+{% endblock %}

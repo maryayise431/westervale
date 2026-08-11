@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Transactions — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Transaction History{% endblock %}
+{% block page_subtitle %}Every movement on your account, fully searchable.{% endblock %}
+
+{% block content %}
+<div class="card fade-in d1">
+    <form method="get" class="filter-bar">
+        <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search remarks…">
+        <select name="type" class="form-control" onchange="this.form.submit()">
+            <option value="">All Types</option>
+            {% for value, label in type_choices %}
+            <option value="{{ value }}" {% if txn_type == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="form-control" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="sort" class="form-control" onchange="this.form.submit()">
+            <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Newest First</option>
+            <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+            <option value="-amount" {% if sort == '-amount' %}selected{% endif %}>Highest Amount</option>
+            <option value="amount" {% if sort == 'amount' %}selected{% endif %}>Lowest Amount</option>
+        </select>
+        <button type="submit" class="btn btn-ghost">Filter</button>
+        {% if search or txn_type or status %}<a href="{% url 'transactions:history' %}" class="btn btn-outline btn-sm">Clear</a>{% endif %}
+    </form>
+
+    {% if page_obj %}
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in page_obj %}
+                <tr>
+                    <td>
+                        <div class="tx-cell">
+                            <span class="tx-icon {{ txn.type }}">
+                                {% if txn.type == 'deposit' %}<i class="ri-arrow-down-circle-line"></i>
+                                {% elif txn.type == 'withdrawal' %}<i class="ri-arrow-up-circle-line"></i>
+                                {% elif txn.type == 'investment' %}<i class="ri-funds-line"></i>
+                                {% else %}<i class="ri-line-chart-line"></i>{% endif %}
+                            </span>
+                            <span>
+                                <span class="tx-title">{{ txn.remarks|default:txn.get_type_display }}</span>
+                                <span class="tx-sub mono">{{ txn.transaction_id|slice:":12"|upper }}</span>
+                            </span>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-gray">{{ txn.get_type_display }}</span></td>
+                    <td class="{% if txn.status == 'completed' %}{% if txn.type == 'withdrawal' or txn.type == 'investment' %}amount-neg{% else %}amount-pos{% endif %}{% else %}text-muted{% endif %}">
+                        {% if txn.status == 'completed' %}{% if txn.type == 'withdrawal' or txn.type == 'investment' %}-{% else %}+{% endif %}{% endif %}${{ txn.amount|floatformat:2 }}
+                    </td>
+                    <td class="text-muted">{% if txn.balance_after is not None %}${{ txn.balance_after|floatformat:2 }}{% else %}—{% endif %}</td>
+                    <td>
+                        {% if txn.status == 'completed' %}<span class="badge badge-emerald">Completed</span>
+                        {% elif txn.status == 'pending' %}<span class="badge badge-amber">Pending</span>
+                        {% else %}<span class="badge badge-red">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ txn.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&q={{ search }}&type={{ txn_type }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-left-s-line"></i></a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+            <span class="page-link current">{{ num }}</span>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a href="?page={{ num }}&q={{ search }}&type={{ txn_type }}&status={{ status }}&sort={{ sort }}" class="page-link">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&q={{ search }}&type={{ txn_type }}&status={{ status }}&sort={{ sort }}" class="page-link"><i class="ri-arrow-right-s-line"></i></a>
+        {% endif %}
+        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="icon"><i class="ri-exchange-funds-line"></i></div>
+        <h4>No transactions found</h4>
+        <p>{% if search %}No results match your filters.{% else %}Your transaction history is empty.{% endif %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

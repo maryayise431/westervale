@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}My Profile — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}My Profile{% endblock %}
+{% block page_subtitle %}Manage your personal details and account.{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <div>
+        <div class="card profile-card fade-in d1">
+            <div class="profile-avatar floaty">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="{{ request.user.username }}">
+                {% else %}
+                {{ request.user.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+            <h2 class="profile-name">{{ request.user.get_full_name|default:request.user.username }}</h2>
+            <p class="profile-email">{{ request.user.email }}</p>
+
+            <div class="profile-badges">
+                {% if profile.account_status == 'trading' %}
+                <span class="badge badge-emerald status-trading"><i class="ri-line-chart-line"></i> Trading</span>
+                {% else %}
+                <span class="badge badge-red status-not-trading"><i class="ri-pause-circle-line"></i> Not Trading</span>
+                {% endif %}
+                <span class="badge badge-gray mono">{{ profile.referral_id }}</span>
+            </div>
+
+            <div class="profile-balances">
+                <div class="pb-item">
+                    <div class="pb-label">Current Balance</div>
+                    <div class="pb-value">${{ profile.current_balance|floatformat:2 }}</div>
+                </div>
+                <div class="pb-item">
+                    <div class="pb-label">Trading Balance</div>
+                    <div class="pb-value">${{ profile.trading_balance|floatformat:2 }}</div>
+                </div>
+                <div class="pb-item">
+                    <div class="pb-label">Total</div>
+                    <div class="pb-value">${{ profile.total_balance|floatformat:2 }}</div>
+                </div>
+            </div>
+
+            <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-block">Hold Now <i class="ri-funds-line"></i></a>
+        </div>
+
+        <div class="card fade-in d2 mt-3">
+            <div class="card-title">
+                <h3><i class="ri-user-share-line" style="color:var(--gold-light);"></i> Referral</h3>
+            </div>
+            <p class="text-secondary mb-2" style="font-size:0.85rem;">Share your code and earn rewards when friends join Westervale Capital.</p>
+            <div class="wallet-box">
+                <span class="wallet-text" id="referralId">{{ profile.referral_id }}</span>
+                <button type="button" class="copy-btn" data-copy data-copy-target="#referralId" aria-label="Copy referral"><i class="ri-file-copy-line"></i></button>
+            </div>
+            <p class="text-muted" style="font-size:0.78rem;">Referred by:
+                {% if profile.referred_by %}<span class="mono text-gold">{{ profile.referred_by.referral_id }}</span>
+                {% else %}<span class="text-secondary">Not set yet</span>{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div>
+        <div class="card fade-in d2">
+            <div class="card-title">
+                <h3><i class="ri-user-settings-line" style="color:var(--gold-light);"></i> Personal Details</h3>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Profile Picture</label>
+                    <label class="profile-drop" for="id_profile_picture">
+                        <div class="pd-icon"><i class="ri-image-add-line"></i></div>
+                        <h4>Click to upload or drag &amp; drop</h4>
+                        <p>JPG or PNG, max 5MB.</p>
+                        {{ form.profile_picture }}
+                    </label>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="id_phone">Phone</label>
+                        {{ form.phone }}
+                        {% if not profile.phone %}<span class="form-hint text-gold">Not set yet</span>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_city">City</label>
+                        {{ form.city }}
+                        {% if not profile.city %}<span class="form-hint text-gold">Not set yet</span>{% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="id_country">Country</label>
+                        {{ form.country }}
+                        {% if not profile.country %}<span class="form-hint text-gold">Not set yet</span>{% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_occupation">Occupation</label>
+                        {{ form.occupation }}
+                        {% if not profile.occupation %}<span class="form-hint text-gold">Not set yet</span>{% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_address">Address</label>
+                    {{ form.address }}
+                    {% if not profile.address %}<span class="form-hint text-gold">Not set yet</span>{% endif %}
+                </div>
+                <button type="submit" class="btn btn-gold">Save Changes <i class="ri-save-3-line"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

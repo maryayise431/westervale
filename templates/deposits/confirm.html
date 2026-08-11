@@ -1,0 +1,85 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Upload Proof — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deposits.css' %}">
+{% endblock %}
+
+{% block page_title %}Confirm Payment{% endblock %}
+{% block page_subtitle %}Step 2 — Upload your payment proof for verification.{% endblock %}
+
+{% block content %}
+<div class="deposit-steps fade-in">
+    <span class="deposit-step done"><span class="ds-num">✓</span> Fund Deposit</span>
+    <i class="ri-arrow-right-line ds-arrow"></i>
+    <span class="deposit-step active"><span class="ds-num">2</span> Upload Proof</span>
+    <i class="ri-arrow-right-line ds-arrow"></i>
+    <span class="deposit-step"><span class="ds-num">3</span> Verification</span>
+</div>
+
+<div class="grid-2">
+    <div class="card fade-in d1">
+        <div class="card-title">
+            <h3><i class="ri-arrow-down-circle-line" style="color:var(--gold-light);"></i> Deposit Summary</h3>
+        </div>
+        <div class="return-banner">
+            <span class="rb-label">Expected Return at Maturity</span>
+            <span class="rb-value">${{ deposit.investment.expected_return|floatformat:2 }}</span>
+        </div>
+        <div class="deposit-summary">
+            <div class="ds-item">
+                <div class="ds-label">Reference</div>
+                <div class="ds-value mono">{{ deposit.reference|default:deposit.pk }}</div>
+            </div>
+            <div class="ds-item">
+                <div class="ds-label">Plan</div>
+                <div class="ds-value">{{ deposit.investment.plan.name }}</div>
+            </div>
+            <div class="ds-item">
+                <div class="ds-label">Amount</div>
+                <div class="ds-value">${{ deposit.amount|floatformat:2 }}</div>
+            </div>
+            <div class="ds-item">
+                <div class="ds-label">Sent To</div>
+                <div class="ds-value mono" style="font-size:0.72rem;">{{ deposit.wallet_address_sent_to|slice:":22" }}…</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card fade-in d2">
+        <div class="card-title">
+            <h3><i class="ri-upload-cloud-2-line" style="color:var(--gold-light);"></i> Upload Payment Proof</h3>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label" for="paymentProof">Transaction Screenshot <span class="required">*</span></label>
+                <label class="proof-drop" for="paymentProof" id="proofDrop">
+                    <div class="pd-icon"><i class="ri-image-add-line"></i></div>
+                    <h4>Click to upload or drag &amp; drop</h4>
+                    <p>PNG, JPG or WEBP · Max 5MB</p>
+                    <span class="proof-browse-btn"><i class="ri-upload-2-line"></i> Browse Files</span>
+                    <input type="file" id="paymentProof" name="payment_proof" accept="image/*" class="proof-input" required>
+                </label>
+                <div class="proof-preview" id="proofPreview" style="display:none;">
+                    <img src="" alt="Payment proof preview">
+                    <button type="button" class="proof-remove" id="proofRemove" aria-label="Remove image"><i class="ri-close-line"></i></button>
+                </div>
+                <span class="form-hint">Upload a clear screenshot showing the transaction from your wallet.</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="notes">Notes (Optional)</label>
+                <textarea id="notes" name="notes" class="form-control" placeholder="Anything we should know?"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-lg btn-block">
+                Submit for Verification <i class="ri-shield-check-line"></i>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

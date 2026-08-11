@@ -1,0 +1,145 @@
+/* ===== Dashboard ===== */
+.hero-balance {
+    border-radius: var(--radius-lg);
+    padding: 1.9rem 2rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(16, 185, 129, 0.06) 45%, rgba(59, 130, 246, 0.1));
+    backdrop-filter: blur(20px);
+    margin-bottom: 1.75rem;
+}
+
+.hero-balance::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.25), transparent 70%);
+    pointer-events: none;
+}
+
+.hero-balance .hb-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hero-balance .hb-amount {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0.5rem 0;
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.hero-balance .hb-amount .currency {
+    font-size: 1.5rem;
+    color: var(--gold-light);
+}
+
+.hero-balance .hb-amount .counter-suffix { font-size: 1.2rem; color: var(--text-muted); }
+
+.hero-balance .hb-meta {
+    display: flex;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+}
+
+.hero-balance .hb-meta .hm-item { font-size: 0.82rem; color: var(--text-muted); }
+.hero-balance .hb-meta .hm-item strong { color: var(--text-primary); font-size: 0.95rem; }
+
+.chart-box {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
+.chart-box.sm { height: 240px; }
+.chart-box.doughnut { height: 260px; }
+
+.chart-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+.chart-overlay .co-value { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+.chart-overlay .co-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.dashboard-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.dash-action {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--glass);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dash-action:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow);
+}
+
+.dash-action .da-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.dash-action.deposit .da-icon { background: rgba(16, 185, 129, 0.14); color: var(--emerald-light); }
+.dash-action.withdraw .da-icon { background: rgba(239, 68, 68, 0.14); color: #F87171; }
+.dash-action.invest .da-icon { background: rgba(212, 175, 55, 0.14); color: var(--gold-light); }
+.dash-action.plans .da-icon { background: rgba(59, 130, 246, 0.16); color: var(--blue-light); }
+
+.dash-action .da-title { display: block; font-weight: 700; font-size: 0.9rem; }
+.dash-action .da-sub { font-size: 0.76rem; color: var(--text-muted); }
+
+.chart-legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.78rem; color: var(--text-secondary); }
+.chart-legend .lg-item { display: flex; align-items: center; gap: 0.45rem; }
+.chart-legend .lg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* Growth sparkline row */
+.growth-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+}
+
+@media (max-width: 900px) {
+    .growth-row { grid-template-columns: 1fr; }
+    .hero-balance .hb-amount { font-size: 2.3rem; }
+}

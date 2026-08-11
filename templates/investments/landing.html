@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Holdings — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/investments.css' %}">
+{% endblock %}
+
+{% block page_title %}Holding Plans{% endblock %}
+{% block page_subtitle %}Choose the strategy that fits your goals.{% endblock %}
+
+{% block content %}
+<section class="plan-hero fade-in">
+    <div class="ph-icon"><i class="ri-funds-line"></i></div>
+    <h2>Hold With Confidence</h2>
+    <p>Two categories, one goal — growth. Start with a fast weekly cycle or a flexible strategy that adapts to your timeline. Every plan is backed by transparent, compounding returns and capital security.</p>
+</section>
+
+<div class="category-grid">
+    <a href="{% url 'investments:periodic' %}" class="category-card periodic fade-in d1">
+        <div class="cc-icon"><i class="ri-flashlight-line"></i></div>
+        <h3>Periodic Plans</h3>
+        <p>Fixed cycles with guaranteed returns. Perfect for holders who want predictable, short-term growth with a clear exit date.</p>
+        <div class="cc-stats">
+            <div class="cc-stat">
+                <div class="cs-value text-gold">{{ periodic_count }}</div>
+                <div class="cs-label">Strategies</div>
+            </div>
+            <div class="cc-stat">
+                <div class="cs-value text-gold">200%</div>
+                <div class="cs-label">Start ROI</div>
+            </div>
+            <div class="cc-stat">
+                <div class="cs-value text-gold">26w</div>
+                <div class="cs-label">Fastest Cycle</div>
+            </div>
+        </div>
+        <span class="btn btn-gold">Explore Periodic <i class="ri-arrow-right-line"></i></span>
+    </a>
+
+    <a href="{% url 'investments:flexible' %}" class="category-card flexible fade-in d2">
+        <div class="cc-icon"><i class="ri-pie-chart-2-line"></i></div>
+        <h3>Flexible Plans</h3>
+        <p>Twenty strategies spanning every budget, from $300 to $1,000,000. Choose your amount, choose your duration.</p>
+        <div class="cc-stats">
+            <div class="cc-stat">
+                <div class="cs-value text-blue">{{ flexible_count }}</div>
+                <div class="cs-label">Strategies</div>
+            </div>
+            <div class="cc-stat">
+                <div class="cs-value text-blue">$300</div>
+                <div class="cs-label">From</div>
+            </div>
+            <div class="cc-stat">
+                <div class="cs-value text-blue">900%</div>
+                <div class="cs-label">Top ROI</div>
+            </div>
+        </div>
+        <span class="btn btn-blue">Explore Flexible <i class="ri-arrow-right-line"></i></span>
+    </a>
+</div>
+
+<div class="card mt-4 fade-in d3">
+    <div class="card-title">
+        <h3><i class="ri-shield-check-line" style="color:var(--gold-light);"></i> How it works</h3>
+    </div>
+    <div class="grid-4">
+        <div>
+            <div class="timeline-item"><div class="tl-title">1 · Select a plan</div><div class="tl-sub">Pick periodic or flexible, choose your amount.</div></div>
+        </div>
+        <div>
+            <div class="timeline-item"><div class="tl-title">2 · Fund your deposit</div><div class="tl-sub">Send crypto to the wallet we show you.</div></div>
+        </div>
+        <div>
+            <div class="timeline-item"><div class="tl-title">3 · Upload proof</div><div class="tl-sub">Confirm payment; admin verifies in minutes.</div></div>
+        </div>
+        <div>
+            <div class="timeline-item"><div class="tl-title">4 · Watch it grow</div><div class="tl-sub">Returns land in your balance at maturity.</div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

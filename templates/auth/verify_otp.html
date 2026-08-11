@@ -1,0 +1,90 @@
+﻿{% extends 'auth_base.html' %}
+{% load static %}
+{% block title %}Verify Email — {{ SITE_NAME }}{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-title">
+        <span class="auth-title-icon"><i class="ri-mail-send-line"></i></span>
+        <h2>Check Your Inbox</h2>
+        <p>{% if purpose == 'reset' %}We've sent a code to reset your password.{% else %}We've sent a 6-digit verification code to:{% endif %}</p>
+    </div>
+
+    <div class="otp-email-box">
+        <i class="ri-mail-line"></i>
+        <span>{{ email }}</span>
+    </div>
+
+    {% if form.errors %}
+    <ul class="error-list">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}<li><i class="ri-alert-line"></i> {{ error }}</li>{% endfor %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" class="auth-form" id="otpForm" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="id_code">Verification Code</label>
+            <div class="otp-inputs" data-otp-wrap>
+                <input type="tel" class="form-control otp-digit" data-otp-index="0" inputmode="numeric" autocomplete="one-time-code" maxlength="1" required>
+                <input type="tel" class="form-control otp-digit" data-otp-index="1" inputmode="numeric" maxlength="1" required>
+                <input type="tel" class="form-control otp-digit" data-otp-index="2" inputmode="numeric" maxlength="1" required>
+                <input type="tel" class="form-control otp-digit" data-otp-index="3" inputmode="numeric" maxlength="1" required>
+                <input type="tel" class="form-control otp-digit" data-otp-index="4" inputmode="numeric" maxlength="1" required>
+                <input type="tel" class="form-control otp-digit" data-otp-index="5" inputmode="numeric" maxlength="1" required>
+            </div>
+            <input type="hidden" id="id_code" name="code" value="{{ form.code.value|default_if_none:'' }}">
+            <span class="form-error" data-error-for="code">
+                {% for error in form.code.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <button type="submit" class="btn btn-gold btn-lg btn-block" id="verifyBtn" disabled>
+            Verify Code <i class="ri-check-line"></i>
+        </button>
+    </form>
+
+    <div class="auth-alt otp-resend" id="otpResendBox">
+        Didn't receive it? <a href="{% url 'accounts:resend_otp' %}" id="resendLink">Resend code</a>
+        <span class="otp-countdown" id="otpCountdown"></span>
+    </div>
+
+    <div class="auth-security-note">
+        <i class="ri-shield-check-line"></i> Codes expire after 10 minutes
+    </div>
+
+    <div class="auth-alt">
+        <a href="{% url 'accounts:login' %}">Back to sign in</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+<script>
+(function () {
+    var link = document.getElementById('resendLink');
+    var counter = document.getElementById('otpCountdown');
+    if (!link || !counter) return;
+
+    var seconds = 30;
+    link.addEventListener('click', function () {
+        link.style.pointerEvents = 'none';
+        link.style.opacity = '0.5';
+        counter.textContent = ' (' + seconds + 's)';
+        var timer = setInterval(function () {
+            seconds -= 1;
+            counter.textContent = ' (' + seconds + 's)';
+            if (seconds <= 0) {
+                clearInterval(timer);
+                link.style.pointerEvents = '';
+                link.style.opacity = '';
+                counter.textContent = '';
+                seconds = 30;
+            }
+        }, 1000);
+    });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Withdraw — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/withdrawals.css' %}">
+{% endblock %}
+
+{% block page_title %}Withdraw Funds{% endblock %}
+{% block page_subtitle %}Request a payout to your crypto wallet.{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <div>
+        <div class="withdraw-balance fade-in d1">
+            <div class="wb-label"><i class="ri-wallet-3-line"></i> Available Balance</div>
+            <div class="wb-amount"><span class="currency">$</span><span class="counter" data-target="{{ available }}" data-decimals="2">0.00</span></div>
+        </div>
+
+        <div class="card fade-in d3">
+            <div class="card-title">
+                <h3><i class="ri-arrow-up-circle-line" style="color:var(--gold-light);"></i> Request Withdrawal</h3>
+            </div>
+            <form method="post" id="withdrawForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label" for="amount">Withdrawal Amount <span class="required">*</span></label>
+                    <input type="number" id="amount" name="amount" class="form-control" min="{{ minimum }}" step="0.01" placeholder="e.g. 2500.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="wallet_address">Crypto Wallet Address <span class="required">*</span></label>
+                    <input type="text" id="wallet_address" name="wallet_address" class="form-control mono" placeholder="Enter your receiving wallet address" required>
+                    <span class="form-hint">Funds are sent to this address. Double-check it carefully.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Confirm Password <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your account password to authorize" required>
+                </div>
+
+                <button type="submit" class="btn btn-gold btn-lg btn-block mt-2" id="submitBtn">
+                    Submit Withdrawal Request <i class="ri-send-plane-line"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card fade-in d2">
+        <div class="card-title">
+            <h3><i class="ri-timer-line" style="color:var(--gold-light);"></i> Withdrawal Process</h3>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="tl-title">1 · Request submitted</div>
+                <div class="tl-sub">Your request enters the pending queue instantly.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="tl-title">2 · Admin review</div>
+                <div class="tl-sub">Our team verifies your balance and request details.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="tl-title">3 · Payout</div>
+                <div class="tl-sub">Once approved, funds are released to your wallet address.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="tl-title">4 · Transaction recorded</div>
+                <div class="tl-sub">The debit appears in your transaction history immediately.</div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="{% url 'withdrawals:history' %}" class="btn btn-outline btn-block">View Withdrawal History</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

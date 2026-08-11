@@ -1,0 +1,68 @@
+﻿{% extends 'auth_base.html' %}
+{% load static %}
+{% block title %}Create Account - {{ SITE_NAME }}{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+    <div class="auth-title">
+        <h2>Create Your Account</h2>
+    </div>
+
+    {% if form.non_field_errors %}
+    <ul class="error-list">
+        {% for error in form.non_field_errors %}<li><i class="ri-alert-line"></i> {{ error }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" class="auth-form" id="registerForm" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="id_username">Username <span class="required">*</span></label>
+            <input type="text" id="id_username" name="username" class="form-control" placeholder="Choose a display name" value="{{ form.username.value|default_if_none:'' }}" autocomplete="off" data-live="username" required>
+            <span class="form-error" data-error-for="username">
+                {% for error in form.username.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_email">Email Address <span class="required">*</span></label>
+            <input type="email" id="id_email" name="email" class="form-control" placeholder="you@example.com" value="{{ form.email.value|default_if_none:'' }}" autocomplete="email" data-live="email" required>
+            <span class="form-error" data-error-for="email">
+                {% for error in form.email.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_password1">Password <span class="required">*</span></label>
+            <input type="password" id="id_password1" name="password1" class="form-control" placeholder="Create a strong password" autocomplete="new-password" data-live="password" required>
+            <div class="strength-meter"><span id="strengthBar"></span></div>
+            <span class="form-error" data-error-for="password">
+                {% for error in form.password1.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_password2">Confirm Password <span class="required">*</span></label>
+            <input type="password" id="id_password2" name="password2" class="form-control" placeholder="Repeat your password" autocomplete="new-password" data-live="confirm" required>
+            <span class="form-error" data-error-for="confirm">
+                {% for error in form.password2.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_referral_code">Referral Code <span class="optional">(Optional)</span></label>
+            <input type="text" id="id_referral_code" name="referral_code" class="form-control" placeholder="Enter a referral code" value="{{ form.referral_code.value|default_if_none:'' }}" maxlength="12" autocomplete="off">
+            <span class="form-error" data-error-for="referral_code">
+                {% for error in form.referral_code.errors %}{{ error }}{% endfor %}
+            </span>
+        </div>
+        <button type="submit" class="btn btn-gold btn-lg btn-block" id="registerBtn">
+            Create Account <i class="ri-rocket-2-line"></i>
+        </button>
+    </form>
+
+    <div class="auth-alt">
+        Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,83 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}Deposit {{ deposit.reference|default:deposit.pk }} — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/deposits.css' %}">
+{% endblock %}
+
+{% block page_title %}Deposit Status{% endblock %}
+{% block page_subtitle %}Track your deposit through the verification process.{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <div class="card deposit-status-card fade-in d1">
+        {% if deposit.status == 'pending' %}
+        <div class="status-icon pending"><i class="ri-time-line"></i></div>
+        <h3>Awaiting Verification</h3>
+        <p>Your payment proof is being reviewed by our verification team. Funds are usually credited within minutes during business hours.</p>
+        {% elif deposit.status == 'approved' %}
+        <div class="status-icon approved"><i class="ri-checkbox-circle-line"></i></div>
+        <h3>Deposit Approved</h3>
+        {% if deposit.source == 'balance' %}
+        <p>Your holding is now <strong class="text-emerald">active</strong>. The deposit amount of <strong class="text-emerald">${{ deposit.amount|floatformat:2 }}</strong> was debited from your available balance.</p>
+        {% else %}
+        <p>Your deposit has been verified and <strong class="text-emerald">${{ deposit.amount|floatformat:2 }}</strong> has been credited to your balance. Your holding is now active.</p>
+        {% endif %}
+        {% else %}
+        <div class="status-icon rejected"><i class="ri-close-circle-line"></i></div>
+        <h3>Deposit Rejected</h3>
+        <p>We could not verify this payment. {% if deposit.admin_remarks %}<br><em>"{{ deposit.admin_remarks }}"</em>{% endif %}</p>
+        {% endif %}
+        {% if deposit.investment %}
+        <a href="{% url 'deposits:initiate' deposit.investment.plan.slug %}" class="btn btn-gold mt-3">Make Another Deposit</a>
+        {% else %}
+        <a href="{% url 'deposits:index' %}" class="btn btn-gold mt-3">Make Another Deposit</a>
+        {% endif %}
+    </div>
+
+    <div>
+        <div class="card fade-in d2 mb-3">
+            <div class="card-title">
+                <h3><i class="ri-receipt-line" style="color:var(--gold-light);"></i> Deposit Details</h3>
+                <span class="badge {% if deposit.status == 'approved' %}badge-emerald{% elif deposit.status == 'rejected' %}badge-red{% else %}badge-amber{% endif %}">{{ deposit.get_status_display }}</span>
+            </div>
+            <div class="deposit-summary">
+                <div class="ds-item">
+                    <div class="ds-label">Reference</div>
+                    <div class="ds-value mono">{{ deposit.reference|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Plan</div>
+                    <div class="ds-value">{{ deposit.investment.plan.name|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Amount Sent</div>
+                    <div class="ds-value">${{ deposit.amount|floatformat:2 }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Transaction Hash</div>
+                    <div class="ds-value mono" style="font-size:0.72rem;">{{ deposit.transaction_hash|default:"—" }}</div>
+                </div>
+                <div class="ds-item">
+                    <div class="ds-label">Submitted</div>
+                    <div class="ds-value">{{ deposit.created_at|date:"M d, Y H:i" }}</div>
+                </div>
+            </div>
+            {% if deposit.notes %}
+            <p class="text-muted" style="font-size:0.82rem;">{{ deposit.notes }}</p>
+            {% endif %}
+        </div>
+
+        {% if deposit.payment_proof %}
+        <div class="card fade-in d3">
+            <div class="card-title">
+                <h3><i class="ri-image-line" style="color:var(--gold-light);"></i> Payment Proof</h3>
+                <a href="{{ deposit.payment_proof.url }}" target="_blank" class="btn btn-ghost btn-sm">Open Full Size</a>
+            </div>
+            <img src="{{ deposit.payment_proof.url }}" alt="Payment proof" style="width:100%; border-radius:var(--radius-sm); border:1px solid var(--border);">
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
