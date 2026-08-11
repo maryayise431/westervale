@@ -19,7 +19,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
 MAINTENANCE_MODE = os.environ.get('DJANGO_MAINTENANCE_MODE', '0') == '1'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
