@@ -3,9 +3,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.db.models import F, Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
+from apps.investments.models import UserInvestment
 from apps.transactions.models import Transaction
 
 from .forms import (
@@ -245,9 +247,18 @@ def profile_view(request):
             return redirect('accounts:profile')
     else:
         form = ProfileForm(instance=profile)
+
+    non_cancelled = UserInvestment.objects.filter(user=request.user).exclude(status='cancelled')
+    profit_total = non_cancelled.annotate(
+        profit=F('expected_return') - F('amount_invested')
+    ).aggregate(t=Sum('profit'))['t'] or 0
+    amount_invested_total = non_cancelled.aggregate(t=Sum('amount_invested'))['t'] or 0
+
     return render(request, 'profile/profile.html', {
         'form': form,
         'profile': profile,
+        'net_profit': float(profit_total),
+        'amount_invested': float(amount_invested_total),
     })
 
 

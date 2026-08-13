@@ -1,0 +1,368 @@
+/* ===== WESTERVALE portfolio.css — live portfolio dashboard ===== */
+
+.portfolio-section [hidden] {
+    display: none !important;
+}
+
+.portfolio-section {
+    margin-top: 2rem;
+}
+
+.portfolio-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.portfolio-head h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.35rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.portfolio-head p {
+    margin: 0.25rem 0 0;
+    font-size: 0.82rem;
+}
+
+#portfolioRefreshBtn.spinning i {
+    display: inline-block;
+    animation: portfolio-spin 0.9s linear infinite;
+}
+
+@keyframes portfolio-spin {
+    to { transform: rotate(360deg); }
+}
+
+.portfolio-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.spinner {
+    width: 38px;
+    height: 38px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: portfolio-spin 0.8s linear infinite;
+}
+
+.portfolio-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 2.5rem 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.portfolio-error p {
+    margin: 0;
+}
+
+.portfolio-stale {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--amber);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.portfolio-grid .card {
+    margin: 0;
+}
+
+.donut-wrap {
+    position: relative;
+    height: 260px;
+    margin-bottom: 0.5rem;
+}
+
+.portfolio-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.portfolio-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    cursor: default;
+    transition: background 0.2s ease;
+}
+
+.portfolio-legend li:hover {
+    background: var(--bg-elevated);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-ticker {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    color: var(--gold-light);
+    min-width: 64px;
+}
+
+.legend-name {
+    flex: 1;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.legend-meta {
+    text-align: right;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.legend-meta small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+
+#portfolioHoldingsTable .amount-pos,
+#portfolioHoldingsTable .amount-neg {
+    font-variant-numeric: tabular-nums;
+}
+
+#portfolioHoldingsTable tr.hidden-row {
+    display: none;
+}
+
+.sector-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.6rem 0;
+}
+
+.sector-row + .sector-row {
+    border-top: 1px solid var(--border);
+}
+
+.sector-name {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sector-track {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.sector-bar {
+    height: 100%;
+    border-radius: 50px;
+    transition: width 0.6s ease;
+}
+
+.sector-meta {
+    width: 110px;
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sector-details {
+    margin-top: 0.75rem;
+}
+
+.sector-detail-group {
+    padding: 0.75rem 0;
+}
+
+.sector-detail-group + .sector-detail-group {
+    border-top: 1px solid var(--border);
+}
+
+.sector-detail-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 0.4rem;
+}
+
+.sector-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    padding: 0.2rem 0;
+}
+
+.portfolio-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+}
+
+.portfolio-stat {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+}
+
+.portfolio-stat .ps-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.portfolio-stat .ps-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.portfolio-stat .ps-sub {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.text-emerald { color: var(--emerald-light); }
+.text-red { color: var(--red); }
+
+.chart-wrap {
+    position: relative;
+    height: 300px;
+}
+
+.chart-legend-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-wrap {
+        height: 240px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sector-name {
+        width: 92px;
+    }
+
+    .sector-meta {
+        width: 84px;
+    }
+
+    .portfolio-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .legend-name {
+        display: none;
+    }
+
+    .portfolio-legend li {
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 640px) {
+    #portfolioHoldingsTable thead {
+        display: none;
+    }
+
+    #portfolioHoldingsTable tbody tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem 1rem;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 0.6rem;
+        background: var(--bg-elevated);
+    }
+
+    #portfolioHoldingsTable tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: none;
+        padding: 0.15rem 0;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    #portfolioHoldingsTable tbody td::before {
+        content: attr(data-label);
+        color: var(--text-muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+        margin-right: 0.75rem;
+    }
+
+    #portfolioHoldingsTable tbody td:first-child {
+        justify-content: flex-start;
+    }
+}

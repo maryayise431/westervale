@@ -150,6 +150,15 @@ WALLET_ADDRESSES = {
 }
 DEPOSIT_WALLET_ASSET = 'BTC'
 
+# Portfolio dashboard data source. 'local' computes holdings from live
+# UserInvestment records. Swap this to a custom provider class path to plug
+# in an external market-data source.
+PORTFOLIO_DATA_SOURCE = 'local'
+PORTFOLIO_REFRESH_INTERVAL_SECONDS = 16200  # ~4.5 hours
+PORTFOLIO_HISTORY_DAYS = 30
+PORTFOLIO_BENCHMARK_ANNUAL_RETURN = 0.10  # S&P 500 style annual proxy
+PORTFOLIO_DIVIDEND_PAYOUT_RATIO = 0.40
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},

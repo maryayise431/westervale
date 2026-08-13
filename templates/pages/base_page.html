@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,13 +24,11 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="{% url 'homepage' %}" class="logo">
-                <span class="logo-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                <span class="logo-icon"><img src="{% static 'images/landingpagelogo.jpeg' %}" alt="Westervale Capital logo"></span>
                 WESTERVALE CAPITAL
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="{% url 'public_investments' %}">Holdings</a></li>
                 <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'services' %}">Services</a></li>
                 <li><a href="{% url 'how_it_works' %}">How It Works</a></li>
                 <li><a href="{% url 'accounts:login' %}" class="btn btn-outline" style="font-size:0.82rem;padding:0.45rem 1rem;">Log In</a></li>
                 <li><a href="{% url 'accounts:register' %}" class="btn btn-primary" style="font-size:0.82rem;padding:0.45rem 1rem;">Sign Up</a></li>
@@ -57,7 +55,7 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <a href="{% url 'homepage' %}" class="logo">
-                    <span class="logo-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                    <span class="logo-icon"><img src="{% static 'images/landingpagelogo.jpeg' %}" alt="Westervale Capital logo"></span>
                 WESTERVALE CAPITAL
                 </a>
                 <p>Explore institutional-style holding opportunities across five stock classes from a single, transparent platform.</p>

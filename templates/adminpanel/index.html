@@ -46,13 +46,21 @@
         <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ revenue }}" data-decimals="2">0.00</span></div>
         <div class="stat-foot">Sum of all user balances</div>
     </div>
-    <div class="card stat-card gold fade-in d6">
+    <div class="card stat-card emerald fade-in d5">
         <div class="stat-top">
-            <span class="stat-label">Trading Balances</span>
-            <span class="stat-icon"><i class="ri-exchange-dollar-line"></i></span>
+            <span class="stat-label">Net Profit</span>
+            <span class="stat-icon"><i class="ri-line-chart-line"></i></span>
         </div>
-        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ trading_balance }}" data-decimals="2">0.00</span></div>
-        <div class="stat-foot">Capital under management</div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ net_profit }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Gains from all users' investments</div>
+    </div>
+    <div class="card stat-card gold fade-in d5">
+        <div class="stat-top">
+            <span class="stat-label">Amount Invested</span>
+            <span class="stat-icon"><i class="ri-funds-box-line"></i></span>
+        </div>
+        <div class="stat-value"><span class="currency">$</span><span class="counter" data-target="{{ amount_invested }}" data-decimals="2">0.00</span></div>
+        <div class="stat-foot">Capital put into plans</div>
     </div>
 </div>
 

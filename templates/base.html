@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
     <meta name="description" content="Premium holding management platform.">
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
 
         <aside class="sidebar" id="sidebar">
             <a href="{% url 'dashboard:index' %}" class="sidebar-brand">
-                <span class="brand-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                <span class="brand-icon"><img src="{% static 'images/landingpagelogo.jpeg' %}" alt="Westervale Capital logo"></span>
                 <span>
                     <span class="brand-name">WESTERVALE<span> CAPITAL</span></span>
                     <span class="brand-tag">Wealth Platform</span>

@@ -13,6 +13,7 @@ from django.utils.dateparse import parse_datetime
 
 from apps.core.decorators import staff_required
 from apps.core.helpers import get_client_ip, money
+from apps.core.platform_settings import get_platform_settings, save_platform_settings
 from apps.deposits.models import Deposit
 from apps.investments.models import UserInvestment
 from apps.transactions.models import Transaction
@@ -123,7 +124,10 @@ def index(request):
     withdrawals = Withdrawal.objects.filter(status='pending')
 
     revenue = users.aggregate(total=Sum('profile__current_balance'))['total'] or 0
-    trading_balance = users.aggregate(total=Sum('profile__trading_balance'))['total'] or 0
+    investments_qs = UserInvestment.objects.filter(user__is_staff=False).exclude(status='cancelled')
+    net_profit = investments_qs.aggregate(
+        t=Sum('expected_return') - Sum('amount_invested'))['t'] or 0
+    amount_invested = investments_qs.aggregate(t=Sum('amount_invested'))['t'] or 0
 
     context = {
         'total_users': users.count(),
@@ -132,7 +136,8 @@ def index(request):
         'pending_deposits': deposits.count(),
         'pending_withdrawals': withdrawals.count(),
         'revenue': float(revenue),
-        'trading_balance': float(trading_balance),
+        'net_profit': float(net_profit),
+        'amount_invested': float(amount_invested),
         'recent_deposits': deposits.select_related('user')[:5],
         'recent_withdrawals': withdrawals.select_related('user')[:5],
         'recent_transactions': Transaction.objects.select_related('user')[:8],
@@ -472,6 +477,33 @@ def transaction_delete(request, pk):
             else 'Transaction history deleted. No balance was moved.'
         )
     return redirect('adminpanel:transaction_list')
+
+
+@staff_required
+def platform_settings_view(request):
+    settings_data = get_platform_settings()
+    if request.method == 'POST':
+        raw = request.POST.get('active_holdings', '').strip()
+        old_value = settings_data.get('active_holdings')
+        if raw:
+            try:
+                value = max(0, int(raw))
+            except (TypeError, ValueError):
+                messages.error(request, 'Active holdings must be a whole number.')
+                return redirect('adminpanel:settings')
+            save_platform_settings({'active_holdings': value})
+            _log(request, 'update', field_changed='active_holdings',
+                 old_value=old_value, new_value=value)
+            messages.success(request, 'Platform settings updated.')
+        else:
+            save_platform_settings({'active_holdings': None})
+            _log(request, 'update', field_changed='active_holdings',
+                 old_value=old_value, new_value='auto')
+            messages.success(request, 'Active holdings set to automatic (from live data).')
+        return redirect('adminpanel:settings')
+    return render(request, 'adminpanel/settings.html', {
+        'platform_settings': settings_data,
+    })
 
 
 @staff_required

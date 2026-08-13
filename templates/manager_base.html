@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
     <meta name="description" content="Manager operations portal — {{ SITE_NAME }}.">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,6 +43,9 @@
                 </a>
                 <a href="{% url 'adminpanel:transaction_list' %}" class="nav-link {% if request.resolver_match.url_name in 'transaction_list,transaction_create,transaction_edit' %}active{% endif %}">
                     <i class="ri-exchange-funds-line"></i> Transactions
+                </a>
+                <a href="{% url 'adminpanel:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="ri-settings-3-line"></i> Settings
                 </a>
             </nav>
 

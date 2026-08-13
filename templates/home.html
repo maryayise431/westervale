@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WESTERVALE CAPITAL | Future of Wealth</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <script>try{var m=document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);var t=m?m[1]:localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -31,16 +31,12 @@
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="logo">
-                <span class="logo-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                <span class="logo-icon"><img src="{% static 'images/landingpagelogo.jpeg' %}" alt="Westervale Capital logo"></span>
                 WESTERVALE CAPITAL
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="{% url 'public_investments' %}">Holdings</a></li>
                 <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'services' %}">Services</a></li>
                 <li><a href="{% url 'how_it_works' %}">How It Works</a></li>
-                <li><a href="#clients">Clients</a></li>
-                <li><a href="#contact">Contact</a></li>
                 <li><a href="{% url 'accounts:login' %}" class="btn btn-outline" style="font-size:0.82rem;padding:0.45rem 1rem;">Log In</a></li>
                 <li><a href="{% url 'accounts:register' %}" class="btn btn-primary" style="font-size:0.82rem;padding:0.45rem 1rem;">Sign Up</a></li>
                 <li><button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="ri-moon-line theme-icon"></i></button></li>
@@ -56,8 +52,7 @@
             <h1>Future of Wealth<br>Management</h1>
 
                 <p>
-    Westervale Capital is a growing investment company focused on stock
-    investments, share purchases, and long-term portfolio holdings.
+    Westervale Capital is a global investment company focused on stock investments, share purchases, and long-term portfolio management. We provide investors with access to structured investment opportunities designed to support portfolio diversification and long-term financial goals. Our commitment to transparency, security, and responsible investment practices is at the heart of everything we do.
 </p>
             <div class="hero-buttons">
                 <a href="{% url 'accounts:login' %}" class="btn btn-primary">Log In <i class="ri-arrow-right-line"></i></a>
@@ -68,62 +63,55 @@
 
     <!-- Holding Categories -->
     <section id="holdings" class="fade-in">
-        <div class="section-header">
-            <span class="section-label">Holdings</span>
-            <h2>Holding Categories</h2>
-            <p>Five stock classes on one platform. Diversify across digital assets, currencies, metals, property, and stocks with strategies designed to match your goals.</p>
-        </div>
-
         <div class="filter-bar">
-         
-            <button class="filter-pill" data-filter="crypto"><i class="ri-bit-coin-line"></i> Crypto</button>
+            <button class="filter-pill active" data-filter="stocks"><i class="ri-funds-line"></i> Stocks</button>
             <button class="filter-pill" data-filter="forex"><i class="ri-money-dollar-circle-line"></i> Forex</button>
             <button class="filter-pill" data-filter="gold"><i class="ri-vip-diamond-line"></i> Gold</button>
             <button class="filter-pill" data-filter="realestate"><i class="ri-building-2-line"></i> Real Estate</button>
-            <button class="filter-pill active" data-filter="stocks"><i class="ri-funds-line"></i> Stocks</button>
+            <button class="filter-pill" data-filter="crypto"><i class="ri-bit-coin-line"></i> Crypto</button>
         </div>
 
         <div class="investments-grid">
-            <!-- CRYPTO -->
-            <div class="investment-card" data-category="crypto">
+            <!-- STOCKS -->
+            <div class="investment-card" data-category="stocks">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=800&auto=format&fit=crop" alt="Bitcoin" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-bit-coin-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop" alt="Berkshire Hathaway stock chart" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-funds-line"></i></div>
                 </div>
-                <h3>Bitcoin Core</h3>
-                <p>A long-standing digital stock with deep liquidity and global adoption. Suitable for holders comfortable with price volatility.</p>
+                <h3>Berkshire Hathaway</h3>
+                <p>An anchor stock in a proven conglomerate. A cornerstone holding for long-term growth, dividends, and capital preservation.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Secure cold storage custody</li>
-                    <li><i class="ri-check-line"></i> Cost-averaging strategies</li>
-                    <li><i class="ri-check-line"></i> Transparent fee structure</li>
+                    <li><i class="ri-check-line"></i> Blue-chip stock</li>
+                    <li><i class="ri-check-line"></i> Long-term value strategy</li>
+                    <li><i class="ri-check-line"></i> Capital-preserving profile</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
-            <div class="investment-card" data-category="crypto">
+            <div class="investment-card" data-category="stocks">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1622630998477-20aa696ecb05?q=80&w=800&auto=format&fit=crop" alt="Ethereum" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-coin-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="Analytics dashboard" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-line-chart-line"></i></div>
                 </div>
-                <h3>Ethereum Ecosystem</h3>
-                <p>Smart contract platforms support decentralized applications and programmable value. Exposure to the wider Web3 economy.</p>
+                <h3>Dividend Growers</h3>
+                <p>Companies with a proven record of steadily rising dividends. A defensive income core for long-term holdings.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Staking options</li>
-                    <li><i class="ri-check-line"></i> Layer-2 solutions</li>
-                    <li><i class="ri-check-line"></i> Clear risk disclosures</li>
+                    <li><i class="ri-check-line"></i> Steady dividend income</li>
+                    <li><i class="ri-check-line"></i> Defensive quality profile</li>
+                    <li><i class="ri-check-line"></i> Compounding reinvestment</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
-            <div class="investment-card" data-category="crypto">
+            <div class="investment-card" data-category="stocks">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?q=80&w=800&auto=format&fit=crop" alt="Crypto tokens" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-currency-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop" alt="Growth stock chart" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-rocket-line"></i></div>
                 </div>
-                <h3>Altcoin Index</h3>
-                <p>Diversified exposure across several established tokens, reducing reliance on any single project. Rebalanced on a regular schedule.</p>
+                <h3>Growth Stocks</h3>
+                <p>High-growth companies across technology, consumer, and industrial sectors. Greater upside potential with higher volatility.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Scheduled rebalancing</li>
-                    <li><i class="ri-check-line"></i> Diversified holdings</li>
-                    <li><i class="ri-check-line"></i> Published methodology</li>
+                    <li><i class="ri-check-line"></i> Sector-diversified picks</li>
+                    <li><i class="ri-check-line"></i> Fundamental screening</li>
+                    <li><i class="ri-check-line"></i> High growth, higher risk</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
@@ -260,46 +248,46 @@
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
 
-            <!-- STOCKS -->
-            <div class="investment-card" data-category="stocks">
+            <!-- CRYPTO -->
+            <div class="investment-card" data-category="crypto">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop" alt="Berkshire Hathaway stock chart" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-funds-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=800&auto=format&fit=crop" alt="Bitcoin" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-bit-coin-line"></i></div>
                 </div>
-                <h3>Berkshire Hathaway</h3>
-                <p>An anchor stock in a proven conglomerate. A cornerstone holding for long-term growth, dividends, and capital preservation.</p>
+                <h3>Bitcoin Core</h3>
+                <p>A long-standing digital stock with deep liquidity and global adoption. Suitable for holders comfortable with price volatility.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Blue-chip stock</li>
-                    <li><i class="ri-check-line"></i> Long-term value strategy</li>
-                    <li><i class="ri-check-line"></i> Capital-preserving profile</li>
+                    <li><i class="ri-check-line"></i> Secure cold storage custody</li>
+                    <li><i class="ri-check-line"></i> Cost-averaging strategies</li>
+                    <li><i class="ri-check-line"></i> Transparent fee structure</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
-            <div class="investment-card" data-category="stocks">
+            <div class="investment-card" data-category="crypto">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop" alt="Analytics dashboard" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-line-chart-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1622630998477-20aa696ecb05?q=80&w=800&auto=format&fit=crop" alt="Ethereum" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-coin-line"></i></div>
                 </div>
-                <h3>Dividend Growers</h3>
-                <p>Companies with a proven record of steadily rising dividends. A defensive income core for long-term holdings.</p>
+                <h3>Ethereum Ecosystem</h3>
+                <p>Smart contract platforms support decentralized applications and programmable value. Exposure to the wider Web3 economy.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Steady dividend income</li>
-                    <li><i class="ri-check-line"></i> Defensive quality profile</li>
-                    <li><i class="ri-check-line"></i> Compounding reinvestment</li>
+                    <li><i class="ri-check-line"></i> Staking options</li>
+                    <li><i class="ri-check-line"></i> Layer-2 solutions</li>
+                    <li><i class="ri-check-line"></i> Clear risk disclosures</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
-            <div class="investment-card" data-category="stocks">
+            <div class="investment-card" data-category="crypto">
                 <div class="card-media">
-                    <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop" alt="Growth stock chart" loading="lazy">
-                    <div class="card-media-icon"><i class="ri-rocket-line"></i></div>
+                    <img src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?q=80&w=800&auto=format&fit=crop" alt="Crypto tokens" loading="lazy">
+                    <div class="card-media-icon"><i class="ri-currency-line"></i></div>
                 </div>
-                <h3>Growth Stocks</h3>
-                <p>High-growth companies across technology, consumer, and industrial sectors. Greater upside potential with higher volatility.</p>
+                <h3>Altcoin Index</h3>
+                <p>Diversified exposure across several established tokens, reducing reliance on any single project. Rebalanced on a regular schedule.</p>
                 <ul class="card-features">
-                    <li><i class="ri-check-line"></i> Sector-diversified picks</li>
-                    <li><i class="ri-check-line"></i> Fundamental screening</li>
-                    <li><i class="ri-check-line"></i> High growth, higher risk</li>
+                    <li><i class="ri-check-line"></i> Scheduled rebalancing</li>
+                    <li><i class="ri-check-line"></i> Diversified holdings</li>
+                    <li><i class="ri-check-line"></i> Published methodology</li>
                 </ul>
                 <a href="{% url 'accounts:login' %}" class="card-btn">View Strategy <i class="ri-arrow-right-line"></i></a>
             </div>
@@ -583,7 +571,7 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <a href="#" class="logo">
-                    <span class="logo-icon"><img src="{% static 'images/logo.png' %}" alt="Westervale Capital logo"></span>
+                    <span class="logo-icon"><img src="{% static 'images/landingpagelogo.jpeg' %}" alt="Westervale Capital logo"></span>
                 WESTERVALE CAPITAL
                 </a>
                 <p>Explore institutional-style holding opportunities across five stock classes from a single, transparent platform.</p>

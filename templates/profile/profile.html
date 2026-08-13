@@ -30,16 +30,16 @@
 
             <div class="profile-balances">
                 <div class="pb-item">
-                    <div class="pb-label">Current Balance</div>
+                    <div class="pb-label">Total Portfolio Value</div>
                     <div class="pb-value">${{ profile.current_balance|floatformat:2 }}</div>
                 </div>
                 <div class="pb-item">
-                    <div class="pb-label">Trading Balance</div>
-                    <div class="pb-value">${{ profile.trading_balance|floatformat:2 }}</div>
+                    <div class="pb-label">Net Profit</div>
+                    <div class="pb-value">${{ net_profit|floatformat:2 }}</div>
                 </div>
                 <div class="pb-item">
-                    <div class="pb-label">Total</div>
-                    <div class="pb-value">${{ profile.total_balance|floatformat:2 }}</div>
+                    <div class="pb-label">Amount Invested</div>
+                    <div class="pb-value">${{ amount_invested|floatformat:2 }}</div>
                 </div>
             </div>
 

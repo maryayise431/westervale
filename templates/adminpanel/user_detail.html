@@ -34,12 +34,14 @@
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="id_current_balance">Current Balance</label>
+                        <label class="form-label" for="id_current_balance">Total Portfolio Value</label>
                         <input type="number" step="0.01" id="id_current_balance" name="current_balance" value="{{ target.profile.current_balance }}" class="form-control" required>
+                        <p class="form-hint">The user's wallet — available balance for deposits and withdrawals.</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="id_trading_balance">Trading Balance</label>
+                        <label class="form-label" for="id_trading_balance">Amount Invested</label>
                         <input type="number" step="0.01" id="id_trading_balance" name="trading_balance" value="{{ target.profile.trading_balance }}" class="form-control" required>
+                        <p class="form-hint">Capital locked in active plans (lifetime invested, minus cancellations).</p>
                     </div>
                 </div>
                 <div class="form-group">

@@ -1,0 +1,31 @@
+{% extends 'manager_base.html' %}
+{% block title %}Settings — {{ SITE_NAME }}{% endblock %}
+
+{% block page_title %}Platform Settings{% endblock %}
+{% block page_subtitle %}Manage platform-wide configuration.{% endblock %}
+
+{% block content %}
+<div class="card fade-in d1" style="max-width:760px;">
+    <div class="card-title">
+        <h3><i class="ri-settings-3-line" style="color:var(--gold-light);"></i> Holdings Display</h3>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="id_active_holdings">Active Holdings (display number)</label>
+            <input type="number" step="1" min="0" id="id_active_holdings" name="active_holdings"
+                   value="{{ platform_settings.active_holdings|default_if_none:'' }}" class="form-control">
+            <span class="form-hint">
+                Overrides the "Active Holdings" stat shown on user dashboards. Leave blank to use the automatic
+                count of plans currently running.
+            </span>
+        </div>
+
+        <div class="flex flex-gap">
+            <button type="submit" class="btn btn-gold"><i class="ri-save-3-line"></i> Save Settings</button>
+            <a href="{% url 'adminpanel:index' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
