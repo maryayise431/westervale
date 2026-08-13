@@ -32,7 +32,7 @@
                 <tr>
                     <th>User</th>
                     <th>Amount</th>
-                    <th>Wallet</th>
+                    <th>Payout Method</th>
                     <th>Balance</th>
                     <th>Status</th>
                     <th>Date</th>
@@ -44,7 +44,16 @@
                 <tr>
                     <td class="font-bold">{{ w.user.username }}</td>
                     <td class="amount-neg">${{ w.amount|floatformat:2 }}</td>
-                    <td class="mono" style="font-size:0.76rem;">{{ w.wallet_address|slice:":22" }}…</td>
+                    <td>
+                        {% if w.method == 'bank' %}
+                        <span class="badge badge-blue">Bank</span>
+                        <div class="text-secondary" style="font-size:0.74rem;">{{ w.bank_account_holder }} · {{ w.bank_name }}</div>
+                        <div class="mono" style="font-size:0.7rem;">Acct {{ w.bank_account_number }} · {{ w.bank_account_type }} · Routing {{ w.bank_routing_number }}</div>
+                        {% else %}
+                        <span class="badge badge-gold">Crypto</span>
+                        <div class="mono" style="font-size:0.7rem;">{{ w.wallet_address }}</div>
+                        {% endif %}
+                    </td>
                     <td class="text-secondary">${{ w.user.profile.current_balance|floatformat:2 }}</td>
                     <td>
                         {% if w.status == 'approved' %}<span class="badge badge-emerald">Approved</span>

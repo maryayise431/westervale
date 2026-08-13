@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block page_title %}Withdraw Funds{% endblock %}
-{% block page_subtitle %}Request a payout to your crypto wallet.{% endblock %}
+{% block page_subtitle %}Request a payout to your crypto wallet or bank account.{% endblock %}
 
 {% block content %}
 <div class="grid-2">
@@ -23,15 +23,58 @@
             </div>
             <form method="post" id="withdrawForm">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label class="form-label" for="amount">Withdrawal Amount <span class="required">*</span></label>
-                    <input type="number" id="amount" name="amount" class="form-control" min="{{ minimum }}" step="0.01" placeholder="e.g. 2500.00" required>
+
+                <div class="wd-tabs" role="tablist" aria-label="Withdrawal method">
+                    <label for="tab-crypto" class="wd-tab"><i class="ri-bit-coin-line"></i> Crypto Wallet</label>
+                    <label for="tab-bank" class="wd-tab"><i class="ri-bank-line"></i> Bank Transfer</label>
+                </div>
+
+                <div class="wd-panels">
+                    <input type="radio" name="method" id="tab-crypto" value="crypto" class="wd-radio" checked>
+                    <div class="wd-panel">
+                        <div class="form-group">
+                            <label class="form-label" for="wallet_address">Crypto Wallet Address <span class="required">*</span></label>
+                            <input type="text" id="wallet_address" name="wallet_address" class="form-control mono" placeholder="Enter your receiving wallet address" required>
+                            <span class="form-hint">Funds are sent to this address. Double-check it carefully.</span>
+                        </div>
+                    </div>
+
+                    <input type="radio" name="method" id="tab-bank" value="bank" class="wd-radio">
+                    <div class="wd-panel">
+                        <div class="bank-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="bank_account_holder">Account Holder <span class="required">*</span></label>
+                                <input type="text" id="bank_account_holder" name="bank_account_holder" class="form-control" placeholder="Full name on the account" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="bank_account_number">Account Number <span class="required">*</span></label>
+                                <input type="text" id="bank_account_number" name="bank_account_number" class="form-control" placeholder="Your bank account number" inputmode="numeric" autocomplete="off" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="bank_account_type">Account Type <span class="required">*</span></label>
+                                <select id="bank_account_type" name="bank_account_type" class="form-control" required>
+                                    <option value="" disabled selected>Select account type</option>
+                                    <option value="Checking">Checking</option>
+                                    <option value="Savings">Savings</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="bank_routing_number">ACH Routing Number <span class="required">*</span></label>
+                                <input type="text" id="bank_routing_number" name="bank_routing_number" class="form-control" placeholder="9-digit routing number" inputmode="numeric" required>
+                                <span class="form-hint">Your bank's 9-digit ACH routing number.</span>
+                            </div>
+                            <div class="form-group bank-full">
+                                <label class="form-label" for="bank_name">Bank Name <span class="required">*</span></label>
+                                <input type="text" id="bank_name" name="bank_name" class="form-control" placeholder="e.g. Chase Bank" required>
+                            </div>
+                        </div>
+                        <span class="form-hint">Approved bank payouts are released via ACH to the account above.</span>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="wallet_address">Crypto Wallet Address <span class="required">*</span></label>
-                    <input type="text" id="wallet_address" name="wallet_address" class="form-control mono" placeholder="Enter your receiving wallet address" required>
-                    <span class="form-hint">Funds are sent to this address. Double-check it carefully.</span>
+                    <label class="form-label" for="amount">Withdrawal Amount <span class="required">*</span></label>
+                    <input type="number" id="amount" name="amount" class="form-control" min="{{ minimum }}" step="0.01" placeholder="e.g. 2500.00" required>
                 </div>
 
                 <div class="form-group">
@@ -61,7 +104,7 @@
             </div>
             <div class="timeline-item">
                 <div class="tl-title">3 · Payout</div>
-                <div class="tl-sub">Once approved, funds are released to your wallet address.</div>
+                <div class="tl-sub">Once approved, funds are released to your chosen payout method.</div>
             </div>
             <div class="timeline-item">
                 <div class="tl-title">4 · Transaction recorded</div>

@@ -9,10 +9,20 @@ class Withdrawal(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
+    METHOD_CHOICES = [
+        ('crypto', 'Crypto'),
+        ('bank', 'Bank Transfer'),
+    ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, related_name='withdrawals')
     amount = models.DecimalField(max_digits=16, decimal_places=2)
-    wallet_address = models.CharField(max_length=255)
+    method = models.CharField(max_length=20, choices=METHOD_CHOICES, default='crypto')
+    wallet_address = models.CharField(max_length=255, blank=True)
+    bank_account_holder = models.CharField(max_length=255, blank=True)
+    bank_account_number = models.CharField(max_length=50, blank=True)
+    bank_account_type = models.CharField(max_length=50, blank=True)
+    bank_routing_number = models.CharField(max_length=20, blank=True)
+    bank_name = models.CharField(max_length=150, blank=True)
     password_confirmed = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     admin_remarks = models.TextField(blank=True)

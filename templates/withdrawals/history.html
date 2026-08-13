@@ -24,7 +24,7 @@
                 <tr>
                     <th>Reference</th>
                     <th>Amount</th>
-                    <th>Wallet</th>
+                    <th>Method</th>
                     <th>Status</th>
                     <th>Date</th>
                 </tr>
@@ -42,7 +42,15 @@
                         </div>
                     </td>
                     <td class="amount-neg">-${{ wd.amount|floatformat:2 }}</td>
-                    <td class="mono" style="font-size:0.76rem;">{{ wd.wallet_address|slice:":24" }}…</td>
+                    <td>
+                        {% if wd.method == 'bank' %}
+                        <span class="badge badge-blue">Bank Transfer</span>
+                        <div class="tx-sub">{{ wd.bank_name }} ····{{ wd.bank_account_number|slice:"-4:" }}</div>
+                        {% else %}
+                        <span class="badge badge-gold">Crypto</span>
+                        <div class="tx-sub mono" style="font-size:0.72rem;">{{ wd.wallet_address|slice:":24" }}…</div>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if wd.status == 'approved' %}<span class="badge badge-emerald">Approved</span>
                         {% elif wd.status == 'pending' %}<span class="badge badge-amber">Pending</span>

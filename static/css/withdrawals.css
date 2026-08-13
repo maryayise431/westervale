@@ -61,6 +61,72 @@
 
 .security-row input { accent-color: var(--emerald); width: 18px; height: 18px; cursor: pointer; }
 
+/* ===== Method tabs ===== */
+.wd-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.25rem;
+}
+
+.wd-tab {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: calc(var(--radius-sm) - 4px);
+    border: 1px solid transparent;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.wd-tab i { font-size: 1rem; }
+
+.wd-tab:hover { color: var(--text-primary); background: var(--glass-strong); }
+
+.wd-tabs:has(#tab-crypto:checked) label[for="tab-crypto"],
+.wd-tabs:has(#tab-bank:checked) label[for="tab-bank"] {
+    background: rgba(137, 81, 41, 0.18);
+    border-color: var(--border-strong);
+    color: var(--gold-light);
+}
+
+.wd-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.wd-panels { margin-bottom: 1.25rem; }
+
+.wd-panel { display: none; }
+
+.wd-radio:checked + .wd-panel { display: block; }
+
+/* ===== Bank details grid ===== */
+.bank-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.bank-grid .bank-full { grid-column: 1 / -1; }
+
 @media (max-width: 640px) {
     .withdraw-balance .wb-amount { font-size: 2rem; }
+
+    .bank-grid { grid-template-columns: 1fr; }
+
+    .bank-grid .bank-full { grid-column: auto; }
 }

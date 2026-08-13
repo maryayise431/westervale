@@ -89,6 +89,21 @@ class AdminPanelTests(TestCase):
         self.assertEqual(txn.status, 'completed')
         self.assertEqual(AuditLog.objects.filter(action='Withdrawal Approved').count(), 1)
 
+    def test_withdrawal_list_shows_bank_details(self):
+        Withdrawal.objects.create(
+            user=self.user, amount=1500, method='bank',
+            wallet_address='Bank Transfer',
+            bank_account_holder='Client One', bank_account_number='987654321',
+            bank_account_type='Savings', bank_routing_number='021000021',
+            bank_name='Acme Bank', password_confirmed=True, status='pending',
+        )
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse('adminpanel:withdrawal_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Acme Bank')
+        self.assertContains(response, '987654321')
+        self.assertContains(response, '021000021')
+
     def test_approve_deposit_settles_pending_transaction(self):
         deposit = Deposit.objects.create(
             user=self.user, amount=1000, status='pending', wallet_address_sent_to='addr'
