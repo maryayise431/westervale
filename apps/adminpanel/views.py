@@ -6,7 +6,7 @@ from django.contrib.auth.models import Permission
 from apps.accounts.models import User
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import F, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
@@ -166,7 +166,11 @@ def user_detail(request, pk):
         with transaction.atomic():
             profile = user.profile
             old_balance = profile.current_balance
+            old_trading = profile.trading_balance
             old_status = profile.account_status
+            old_net_profit = profile.net_profit
+            old_amount_invested = profile.amount_invested
+            old_active_holdings = profile.active_holdings
 
             new_balance = money(request.POST.get('current_balance', profile.current_balance))
             new_trading = money(request.POST.get('trading_balance', profile.trading_balance))
@@ -178,19 +182,56 @@ def user_detail(request, pk):
             profile.current_balance = new_balance
             profile.trading_balance = new_trading
             profile.account_status = status
+
+            if 'net_profit_auto' in request.POST:
+                profile.net_profit = None
+            elif request.POST.get('net_profit', '').strip():
+                profile.net_profit = Decimal(str(money(request.POST.get('net_profit'))))
+
+            if 'amount_invested_auto' in request.POST:
+                profile.amount_invested = None
+            elif request.POST.get('amount_invested', '').strip():
+                profile.amount_invested = Decimal(str(money(request.POST.get('amount_invested'))))
+
+            if 'active_holdings_auto' in request.POST:
+                profile.active_holdings = None
+            elif request.POST.get('active_holdings', '').strip():
+                try:
+                    profile.active_holdings = int(float(request.POST.get('active_holdings')))
+                except (TypeError, ValueError):
+                    profile.active_holdings = None
+
             profile.save()
 
             if new_balance != old_balance:
                 _log(request, 'Balance Updated', user, 'current_balance', old_balance, new_balance)
+            if new_trading != old_trading:
+                _log(request, 'Balance Updated', user, 'trading_balance', old_trading, new_trading)
+            if profile.net_profit != old_net_profit:
+                _log(request, 'Balance Updated', user, 'net_profit', old_net_profit, profile.net_profit)
+            if profile.amount_invested != old_amount_invested:
+                _log(request, 'Balance Updated', user, 'amount_invested', old_amount_invested, profile.amount_invested)
+            if profile.active_holdings != old_active_holdings:
+                _log(request, 'Balance Updated', user, 'active_holdings', old_active_holdings, profile.active_holdings)
             if status != old_status:
                 _log(request, 'Status Changed', user, 'account_status', old_status, status)
         messages.success(request, f'Updated {user.username}.')
         return redirect('adminpanel:user_detail', pk=pk)
 
+    non_cancelled = user.investments.exclude(status='cancelled')
+    auto_profit = non_cancelled.annotate(
+        profit=F('expected_return') - F('amount_invested')
+    ).aggregate(t=Sum('profit'))['t'] or 0
+    auto_invested = non_cancelled.aggregate(t=Sum('amount_invested'))['t'] or 0
+    auto_active = user.investments.filter(status='active').count()
+
     return render(request, 'adminpanel/user_detail.html', {
         'target': user,
         'transactions': user.transactions.all()[:10],
         'investments': user.investments.all()[:10],
+        'auto_net_profit': float(auto_profit),
+        'auto_amount_invested': float(auto_invested),
+        'auto_active_holdings': auto_active,
     })
 
 

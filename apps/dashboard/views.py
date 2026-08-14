@@ -81,9 +81,13 @@ def dashboard_index(request):
 
     active_holdings_override = get_platform_settings().get('active_holdings')
     active_holdings_display = (
-        active_holdings_override
-        if active_holdings_override is not None
-        else len(active_investments)
+        profile.active_holdings
+        if profile.active_holdings is not None
+        else (
+            active_holdings_override
+            if active_holdings_override is not None
+            else len(active_investments)
+        )
     )
 
     context = {
@@ -93,8 +97,8 @@ def dashboard_index(request):
         'total_withdrawals': float(withdrawals.aggregate(t=Sum('amount'))['t'] or 0),
         'active_investments': len(active_investments),
         'active_holdings_display': active_holdings_display,
-        'net_profit': float(profit_total),
-        'amount_invested': float(amount_invested_total),
+        'net_profit': float(profile.net_profit) if profile.net_profit is not None else float(profit_total),
+        'amount_invested': float(profile.amount_invested) if profile.amount_invested is not None else float(amount_invested_total),
         'active_performances': active_investments,
         'market_symbols': market_symbols(),
     }

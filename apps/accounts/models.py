@@ -111,6 +111,9 @@ class UserProfile(models.Model):
     account_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_trading')
     current_balance = models.DecimalField(max_digits=16, decimal_places=2, default=Decimal('0.00'))
     trading_balance = models.DecimalField(max_digits=16, decimal_places=2, default=0.00)
+    net_profit = models.DecimalField(max_digits=16, decimal_places=2, null=True, blank=True)
+    amount_invested = models.DecimalField(max_digits=16, decimal_places=2, null=True, blank=True)
+    active_holdings = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

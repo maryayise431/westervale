@@ -39,17 +39,48 @@
                         <p class="form-hint">The user's wallet — available balance for deposits and withdrawals.</p>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="id_trading_balance">Amount Invested</label>
-                        <input type="number" step="0.01" id="id_trading_balance" name="trading_balance" value="{{ target.profile.trading_balance }}" class="form-control" required>
-                        <p class="form-hint">Capital locked in active plans (lifetime invested, minus cancellations).</p>
+                        <label class="form-label" for="id_net_profit">Net Profit</label>
+                        <input type="number" step="0.01" id="id_net_profit" name="net_profit" value="{{ target.profile.net_profit|default:'' }}" class="form-control">
+                        <label style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.35rem;font-size:0.8rem;color:#9ca3af;cursor:pointer;">
+                            <input type="checkbox" name="net_profit_auto" {% if target.profile.net_profit is None %}checked{% endif %}>
+                            Auto (from investments)
+                        </label>
+                        <p class="form-hint">Auto value: ${{ auto_net_profit|floatformat:2 }} — set a value to override.</p>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="id_account_status">Account Status</label>
-                    <select id="id_account_status" name="account_status" class="form-control">
-                        <option value="trading" {% if target.profile.account_status == 'trading' %}selected{% endif %}>Trading</option>
-                        <option value="not_trading" {% if target.profile.account_status == 'not_trading' %}selected{% endif %}>Not Trading</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="id_amount_invested">Amount Invested</label>
+                        <input type="number" step="0.01" id="id_amount_invested" name="amount_invested" value="{{ target.profile.amount_invested|default:'' }}" class="form-control">
+                        <label style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.35rem;font-size:0.8rem;color:#9ca3af;cursor:pointer;">
+                            <input type="checkbox" name="amount_invested_auto" {% if target.profile.amount_invested is None %}checked{% endif %}>
+                            Auto (from investments)
+                        </label>
+                        <p class="form-hint">Auto value: ${{ auto_amount_invested|floatformat:2 }} — set a value to override.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_active_holdings">Active Holdings</label>
+                        <input type="number" step="1" min="0" id="id_active_holdings" name="active_holdings" value="{{ target.profile.active_holdings|default:'' }}" class="form-control">
+                        <label style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.35rem;font-size:0.8rem;color:#9ca3af;cursor:pointer;">
+                            <input type="checkbox" name="active_holdings_auto" {% if target.profile.active_holdings is None %}checked{% endif %}>
+                            Auto (from active plans)
+                        </label>
+                        <p class="form-hint">Auto value: {{ auto_active_holdings }} — set a value to override.</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="id_trading_balance">Trading Balance</label>
+                        <input type="number" step="0.01" id="id_trading_balance" name="trading_balance" value="{{ target.profile.trading_balance }}" class="form-control" required>
+                        <p class="form-hint">Internal locked capital — auto-maintained by the app, adjust only if needed.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="id_account_status">Account Status</label>
+                        <select id="id_account_status" name="account_status" class="form-control">
+                            <option value="trading" {% if target.profile.account_status == 'trading' %}selected{% endif %}>Trading</option>
+                            <option value="not_trading" {% if target.profile.account_status == 'not_trading' %}selected{% endif %}>Not Trading</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="stats-grid" style="margin-bottom:0;">
                     <div class="card stat-card gold" style="padding:1rem;">

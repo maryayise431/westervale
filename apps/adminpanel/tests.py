@@ -260,14 +260,40 @@ class AdminPanelTests(TestCase):
         response = self.client.post(reverse('adminpanel:user_detail', args=[self.user.pk]), {
             'current_balance': '5000.00',
             'trading_balance': '100.00',
+            'net_profit': '250.00',
+            'amount_invested': '800.00',
+            'active_holdings': '3',
             'account_status': 'not_trading',
         })
         self.assertEqual(response.status_code, 302)
         self.user.profile.refresh_from_db()
         self.assertEqual(self.user.profile.current_balance, Decimal('5000.00'))
         self.assertEqual(self.user.profile.trading_balance, Decimal('100.00'))
+        self.assertEqual(self.user.profile.net_profit, Decimal('250.00'))
+        self.assertEqual(self.user.profile.amount_invested, Decimal('800.00'))
+        self.assertEqual(self.user.profile.active_holdings, 3)
         self.assertEqual(self.user.profile.account_status, 'not_trading')
-        self.assertEqual(AuditLog.objects.filter(action='Balance Updated').count(), 1)
+        self.assertEqual(AuditLog.objects.filter(action='Balance Updated').count(), 5)
+
+    def test_admin_balance_edit_auto_clears_override(self):
+        self.user.profile.net_profit = Decimal('999.00')
+        self.user.profile.amount_invested = Decimal('999.00')
+        self.user.profile.active_holdings = 9
+        self.user.profile.save()
+        self.client.force_login(self.admin)
+        response = self.client.post(reverse('adminpanel:user_detail', args=[self.user.pk]), {
+            'current_balance': '5000.00',
+            'trading_balance': '0.00',
+            'net_profit_auto': 'on',
+            'amount_invested_auto': 'on',
+            'active_holdings_auto': 'on',
+            'account_status': 'not_trading',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.user.profile.refresh_from_db()
+        self.assertIsNone(self.user.profile.net_profit)
+        self.assertIsNone(self.user.profile.amount_invested)
+        self.assertIsNone(self.user.profile.active_holdings)
 
     def test_set_user_password(self):
         self.client.force_login(self.admin)

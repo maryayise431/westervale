@@ -257,8 +257,8 @@ def profile_view(request):
     return render(request, 'profile/profile.html', {
         'form': form,
         'profile': profile,
-        'net_profit': float(profit_total),
-        'amount_invested': float(amount_invested_total),
+        'net_profit': float(profile.net_profit) if profile.net_profit is not None else float(profit_total),
+        'amount_invested': float(profile.amount_invested) if profile.amount_invested is not None else float(amount_invested_total),
     })
 
 
