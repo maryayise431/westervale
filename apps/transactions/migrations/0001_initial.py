@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('deposits', '0001_initial'),
         ('investments', '0001_initial'),
-        ('withdrawals', '0002_withdrawal_bank_account_holder_and_more'),
+        ('withdrawals', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
