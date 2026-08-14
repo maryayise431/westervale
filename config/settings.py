@@ -159,7 +159,15 @@ PORTFOLIO_HISTORY_DAYS = 30
 PORTFOLIO_BENCHMARK_ANNUAL_RETURN = 0.10  # S&P 500 style annual proxy
 PORTFOLIO_DIVIDEND_PAYOUT_RATIO = 0.40
 
+# Live market data (Finnhub).
+FINNHUB_API_KEY = os.environ.get('FINNHUB_API_KEY', '')
+MARKET_SYMBOLS = ['AAPL', 'BRK.B', 'KO', 'CVX']
+# Live data is fetched (and cached) at most once every two minutes.
+MARKET_CACHE_SECONDS = 120
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
+
+FINNHUB_API_KEY = os.environ.get('FINNHUB_API_KEY', '') 

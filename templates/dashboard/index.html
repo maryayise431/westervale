@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+<link rel="stylesheet" href="{% static 'css/market.css' %}">
 {% endblock %}
 
 {% block page_title %}Dashboard{% endblock %}
@@ -173,95 +173,78 @@
     {% endif %}
 </div>
 
-<section id="portfolioDashboard" class="portfolio-section fade-in d5"
-         data-refresh-seconds="{{ PORTFOLIO_REFRESH_INTERVAL_SECONDS }}">
-    <div class="portfolio-head">
+<section id="liveMarket" class="live-market fade-in d5">
+    <div class="lm-head">
         <div>
-            <h2>Portfolio Dashboard</h2>
-            <p class="text-secondary" id="portfolioLastUpdated">Loading portfolio…</p>
+            <h2>Live Market</h2>
+            <p class="text-secondary" id="lmUpdated">Loading live prices…</p>
         </div>
-        <button type="button" id="portfolioRefreshBtn" class="btn btn-ghost btn-sm" title="Refresh now">
-            <i class="ri-refresh-line"></i> Refresh
-        </button>
+        <div class="lm-actions">
+            <span class="live-pill"><span class="pulse-dot"></span> LIVE</span>
+            <button type="button" id="lmRefreshBtn" class="btn btn-ghost btn-sm" title="Refresh now">
+                <i class="ri-refresh-line"></i> Refresh
+            </button>
+        </div>
     </div>
 
-    <div id="portfolioLoading" class="portfolio-loading">
+    <div class="lm-symbols" id="lmSymbols">
+        {% for sym in market_symbols %}
+        <button type="button" class="lm-sym{% if forloop.first %} active{% endif %}" data-symbol="{{ sym }}">{{ sym }}</button>
+        {% endfor %}
+    </div>
+
+    <div id="lmLoading" class="lm-loading">
         <div class="spinner"></div>
-        <p>Loading your portfolio…</p>
+        <p>Loading live market data…</p>
     </div>
 
-    <div id="portfolioError" class="portfolio-error" hidden>
-        <p><i class="ri-error-warning-line"></i> We couldn't load your portfolio right now.</p>
-        <button type="button" id="portfolioRetryBtn" class="btn btn-outline btn-sm">Try Again</button>
+    <div id="lmError" class="lm-error" hidden>
+        <p><i class="ri-error-warning-line"></i> We couldn't load live market data right now.</p>
+        <button type="button" id="lmRetryBtn" class="btn btn-outline btn-sm">Try Again</button>
     </div>
 
-    <div id="portfolioEmpty" class="empty-state" hidden>
-        <div class="icon"><i class="ri-pie-chart-2-line"></i></div>
-        <h4>No portfolio data yet</h4>
-        <p>Start holding to build your portfolio and see live performance.</p>
-        <a href="{% url 'investments:landing' %}" class="btn btn-gold btn-sm mt-3">Start Holding</a>
-    </div>
-
-    <div id="portfolioContent" hidden>
-        <div class="portfolio-stale" id="portfolioStaleNotice" hidden>
-            <i class="ri-time-line"></i> Data temporarily unavailable — showing last known values.
-        </div>
-
-        <div class="portfolio-grid">
-            <div class="card">
-                <div class="card-title">
-                    <h3>Allocation</h3>
+    <div id="lmContent" hidden>
+        <div class="lm-grid">
+            <div class="card lm-chart-card">
+                <div class="lm-quote">
+                    <div class="lm-quote-main">
+                        <div class="lm-company">
+                            <img id="lmLogo" class="lm-logo" alt="" hidden>
+                            <span id="lmCompanyName" class="lm-cname">--</span>
+                            <span id="lmExchange" class="lm-exch">--</span>
+                        </div>
+                        <div class="lm-price-row">
+                            <span class="lm-price" id="lmPrice">--</span>
+                            <span class="lm-change" id="lmChange">--</span>
+                        </div>
+                        <div class="lm-range" id="lmRange">Open – · High – · Low – · Prev –</div>
+                    </div>
+                    <div class="lm-tf" id="lmTf">
+                        <button type="button" class="lm-tf-btn active" data-range="1D">1D</button>
+                        <button type="button" class="lm-tf-btn" data-range="1W">1W</button>
+                        <button type="button" class="lm-tf-btn" data-range="1M">1M</button>
+                        <button type="button" class="lm-tf-btn" data-range="3M">3M</button>
+                        <button type="button" class="lm-tf-btn" data-range="1Y">1Y</button>
+                    </div>
                 </div>
-                <div class="donut-wrap">
-                    <canvas id="portfolioDonut" aria-label="Portfolio allocation chart"></canvas>
-                </div>
-                <ul id="portfolioLegend" class="portfolio-legend"></ul>
+                <div class="chart-wrap"><canvas id="lmChart" aria-label="Live price chart"></canvas></div>
+                <div class="chart-legend-note" id="lmChartNote"></div>
             </div>
 
-            <div class="card">
-                <div class="card-title">
-                    <h3>Holdings</h3>
-                    <button type="button" id="portfolioViewAll" class="btn btn-ghost btn-sm">View All Holdings</button>
+            <div class="lm-side">
+                <div class="card">
+                    <div class="card-title"><h3>Company Profile</h3></div>
+                    <div class="lm-facts" id="lmFacts"></div>
                 </div>
-                <div class="table-wrap">
-                    <table class="table" id="portfolioHoldingsTable">
-                        <thead>
-                            <tr>
-                                <th>Ticker</th>
-                                <th>Name</th>
-                                <th>Current Value</th>
-                                <th>% of Total</th>
-                                <th>Day</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="card">
+                    <div class="card-title"><h3>Fundamentals</h3></div>
+                    <div class="lm-stats" id="lmStats"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title"><h3>Dividends</h3></div>
+                    <div class="lm-dividends" id="lmDividends"></div>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <h3>Sector Allocation</h3>
-                    <button type="button" id="portfolioViewSectors" class="btn btn-ghost btn-sm">View Sector Details</button>
-                </div>
-                <div id="portfolioSectors"></div>
-                <div id="portfolioSectorDetails" class="sector-details" hidden></div>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <h3>Portfolio Statistics</h3>
-                </div>
-                <div id="portfolioStats" class="portfolio-stats"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">
-                <h3>Performance</h3>
-                <span class="chart-legend-note">Portfolio vs S&amp;P 500 (indexed)</span>
-            </div>
-            <div class="chart-wrap"><canvas id="portfolioChart" aria-label="Portfolio performance chart"></canvas></div>
         </div>
     </div>
 </section>
@@ -270,6 +253,6 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
 <script src="{% static 'js/charts.js' %}"></script>
-<script src="{% static 'js/portfolio.js' %}"></script>
+<script src="{% static 'js/market.js' %}"></script>
 {% endblock %}
 

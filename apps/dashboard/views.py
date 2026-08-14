@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from apps.core.platform_settings import get_platform_settings
+from apps.dashboard.market import fetch_candles, market_snapshot, market_symbols
 from apps.dashboard.portfolio import portfolio_payload
 from apps.deposits.models import Deposit
 from apps.investments.models import UserInvestment
@@ -95,8 +96,24 @@ def dashboard_index(request):
         'net_profit': float(profit_total),
         'amount_invested': float(amount_invested_total),
         'active_performances': active_investments,
+        'market_symbols': market_symbols(),
     }
     return render(request, 'dashboard/index.html', context)
+
+
+@login_required
+def market_data(request):
+    return JsonResponse(market_snapshot())
+
+
+@login_required
+def market_candles(request):
+    symbol = request.GET.get('symbol', 'AAPL')
+    timeframe = request.GET.get('range', '1D')
+    data = fetch_candles(symbol, timeframe)
+    if data is None:
+        return JsonResponse({'error': 'Could not load price history.'}, status=502)
+    return JsonResponse(data)
 
 
 @login_required

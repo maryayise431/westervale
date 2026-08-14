@@ -47,4 +47,9 @@ EXPOSE 8000
 
 # --workers 3 is a reasonable default for Render's smaller instance types;
 # bump it if you're on a larger plan.
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+#
+# Run migrations before starting. --fake-initial is safe on every boot:
+#   - Fresh database  -> all migrations are applied normally.
+#   - Existing DB that predates migrations (tables created via syncdb)
+#     -> initial migrations are faked, any later migrations are applied.
+CMD ["sh", "-c", "python manage.py migrate --fake-initial && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
