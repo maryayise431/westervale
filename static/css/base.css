@@ -610,6 +610,27 @@ h1, h2, h3, h4, h5, h6 {
 .btn-lg { padding: 0.85rem 1.9rem; font-size: 0.96rem; }
 .btn-block { width: 100%; }
 
+/* ===== Alerts ===== */
+.alert {
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
 /* ===== Forms ===== */
 .form-group { margin-bottom: 1.15rem; }
 

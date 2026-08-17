@@ -10,6 +10,7 @@ urlpatterns = [
     path('users/<int:pk>/', views.user_detail, name='user_detail'),
     path('users/<int:pk>/toggle-status/', views.user_toggle_status, name='user_toggle_status'),
     path('users/<int:pk>/set-password/', views.user_set_password, name='user_set_password'),
+    path('users/<int:pk>/delete/', views.user_delete, name='user_delete'),
     path('deposits/', views.deposit_list, name='deposit_list'),
     path('deposits/<int:pk>/', views.deposit_detail, name='deposit_detail'),
     path('deposits/<int:pk>/<str:action>/', views.deposit_review, name='deposit_review'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('transactions/<int:pk>/delete/', views.transaction_delete, name='transaction_delete'),
     path('audit-log/', views.audit_log_view, name='audit_log'),
     path('settings/', views.platform_settings_view, name='settings'),
+    path('send-email/', views.send_email_view, name='send_email'),
 ]

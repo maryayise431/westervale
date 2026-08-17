@@ -45,7 +45,6 @@
                             <input type="checkbox" name="net_profit_auto" {% if target.profile.net_profit is None %}checked{% endif %}>
                             Auto (from investments)
                         </label>
-                        <p class="form-hint">Auto value: ${{ auto_net_profit|floatformat:2 }} — set a value to override.</p>
                     </div>
                 </div>
                 <div class="form-row">
@@ -56,7 +55,6 @@
                             <input type="checkbox" name="amount_invested_auto" {% if target.profile.amount_invested is None %}checked{% endif %}>
                             Auto (from investments)
                         </label>
-                        <p class="form-hint">Auto value: ${{ auto_amount_invested|floatformat:2 }} — set a value to override.</p>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="id_active_holdings">Active Holdings</label>
@@ -65,7 +63,6 @@
                             <input type="checkbox" name="active_holdings_auto" {% if target.profile.active_holdings is None %}checked{% endif %}>
                             Auto (from active plans)
                         </label>
-                        <p class="form-hint">Auto value: {{ auto_active_holdings }} — set a value to override.</p>
                     </div>
                 </div>
                 <div class="form-row">
@@ -107,6 +104,31 @@
             <div class="form-hint">
                 <i class="ri-eye-line"></i>
                 Current password: <strong>{{ target.plain_password|default:"(not recorded)" }}</strong>
+            </div>
+        </div>
+
+        <div class="card fade-in d3" style="margin-top:1.5rem; border-color:#7f1d1d;">
+            <div class="card-title">
+                <h3 style="color:#fca5a5;"><i class="ri-error-warning-line"></i> Danger Zone</h3>
+            </div>
+            <p style="font-size:0.85rem; color:#9ca3af; margin:0 0 1rem;">Permanently delete this user and all associated data. This action cannot be undone.</p>
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteUserModal').classList.add('open')">
+                <i class="ri-delete-bin-line"></i> Delete Account
+            </button>
+        </div>
+
+        <div class="modal-overlay" id="deleteUserModal">
+            <div class="modal-card">
+                <div class="modal-icon" style="background:rgba(239,68,68,0.15); color:#ef4444;"><i class="ri-delete-bin-line"></i></div>
+                <h3>Delete {{ target.username }}?</h3>
+                <p>This will permanently remove the user, their profile, investments, and all related records.</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('deleteUserModal').classList.remove('open')">Cancel</button>
+                    <form method="post" action="{% url 'adminpanel:user_delete' target.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger"><i class="ri-delete-bin-line"></i> Delete Forever</button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -194,4 +216,19 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+    var modal = document.getElementById('deleteUserModal');
+    if (!modal) return;
+    modal.addEventListener('click', function(e){
+        if (e.target === modal) modal.classList.remove('open');
+    });
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') modal.classList.remove('open');
+    });
+})();
+</script>
 {% endblock %}

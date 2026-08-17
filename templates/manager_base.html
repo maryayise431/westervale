@@ -47,6 +47,9 @@
                 <a href="{% url 'adminpanel:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
                     <i class="ri-settings-3-line"></i> Settings
                 </a>
+                <a href="{% url 'adminpanel:send_email' %}" class="nav-link {% if request.resolver_match.url_name == 'send_email' %}active{% endif %}">
+                    <i class="ri-mail-send-line"></i> Send Email
+                </a>
             </nav>
 
             <div class="sidebar-footer">

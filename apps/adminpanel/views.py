@@ -1,7 +1,10 @@
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 
 from apps.accounts.models import User
 from django.core.paginator import Paginator
@@ -554,3 +557,54 @@ def audit_log_view(request):
     return render(request, 'adminpanel/audit_log.html', {
         'page_obj': paginator.get_page(request.GET.get('page')),
     })
+
+
+@staff_required
+def user_delete(request, pk):
+    target = get_object_or_404(User, pk=pk)
+    if request.method != 'POST':
+        return redirect('adminpanel:user_detail', pk=pk)
+    if target.pk == request.user.pk:
+        messages.error(request, 'You cannot delete your own account.')
+        return redirect('adminpanel:user_detail', pk=pk)
+    username = target.username
+    target.delete()
+    messages.success(request, f'User "{username}" and all related data deleted.')
+    return redirect('adminpanel:user_list')
+
+
+@staff_required
+def send_email_view(request):
+    if request.method == 'POST':
+        recipient_email = request.POST.get('recipient_email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if not recipient_email or not subject or not content:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'adminpanel/send_email.html', {
+                'recipient_email': recipient_email,
+                'subject': subject,
+                'content': content,
+            })
+
+        context = {
+            'subject': subject,
+            'content': content,
+        }
+        email = EmailMultiAlternatives(
+            subject,
+            render_to_string('emails/manager_compose.txt', context),
+            settings.DEFAULT_FROM_EMAIL,
+            [recipient_email],
+        )
+        email.attach_alternative(
+            render_to_string('emails/manager_compose.html', context),
+            'text/html',
+        )
+        email.send(fail_silently=False)
+        _log(request, 'send_email', field_changed='recipient', new_value=recipient_email)
+        messages.success(request, f'Email sent to {recipient_email}.')
+        return render(request, 'adminpanel/send_email.html', {'sent': True})
+
+    return render(request, 'adminpanel/send_email.html')
