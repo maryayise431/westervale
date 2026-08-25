@@ -2,10 +2,12 @@
 
 {{ content }}
 
-Yours faithfully,
+Kind regards,
+Investor Relations,
+Berkshire Hathaway Inc.
 
 Daniel J. Jaksich
-Investment Manager
+Vice President & Principal Accounting Officer
 
 ---
 Berkshire Hathaway Inc.
