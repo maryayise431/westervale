@@ -1,0 +1,88 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f0f4f8; font-family:'Segoe UI', Arial, Helvetica, sans-serif; color:#1a2a3a;">
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f4f8; padding:32px 16px;">
+        <tr>
+            <td align="center">
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:800px; background-color:#ffffff; border:1px solid #d0d8e4; border-radius:16px; overflow:hidden;">
+
+                    <!-- Navbar -->
+                    <tr>
+                        <td style="background:#003366; padding:16px 32px; border-bottom:3px solid #0055a4;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="left" valign="middle">
+                                        <img src="https://www.westervalecapital.com/static/images/berkshire.jpeg" alt="Berkshire Hathaway" width="42" height="42" style="border-radius:8px; display:block;">
+                                    </td>
+                                    <td align="right" valign="middle" style="padding-left:16px;">
+                                        <span style="font-size:12px; color:#b0c4de; letter-spacing:0.5px; text-decoration:none !important;">www.berkshirehathaway.com</span>
+                                        <br>
+                                        <span style="font-size:12px; color:#b0c4de; letter-spacing:0.5px;">+1 (801) 413 3749</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Block letter heading -->
+                    <tr>
+                        <td style="background:#003366; padding:10px 32px 18px; text-align:center; border-bottom:1px solid #002244;">
+                            <span style="font-family:Verdana, sans-serif; font-size:24px; font-weight:800; letter-spacing:6px; color:#ffffff;">BERKSHIRE HATHAWAY INC</span>
+                        </td>
+                    </tr>
+
+                    <!-- Subject + Content -->
+                    <tr>
+                        <td style="padding:32px 48px; background-color:#FFFFFF;">
+                            <h1 style="margin:0 0 20px; font-size:22px; line-height:1.4; color:#1a2a3a;">{{ subject }}</h1>
+                            <div style="font-size:15px; line-height:1.85; color:#3a4a5a;">
+                                {{ content|linebreaks }}
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Yours faithfully + Signature -->
+                    <tr>
+                        <td style="padding:24px 48px 28px; background-color:#FFFFFF;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #d0d8e4;">
+                                <tr>
+                                    <td style="padding:20px 0 16px 0; text-align:left;">
+                                        <p style="margin:0; font-size:14px; color:#1a2a3a; line-height:1.6;">Yours faithfully,</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center; padding-bottom:8px;">
+                                        <img src="https://www.westervalecapital.com/static/images/stock_accountant.png" alt="Daniel J. Jaksich" width="120" style="display:block; margin:0 auto 10px; border-radius:4px; vertical-align:top;">
+                                        <span style="font-size:13px; font-weight:600; color:#003366; letter-spacing:1px; display:block;">Daniel J. Jaksich</span>
+                                        <span style="font-size:11px; color:#5C6878; display:block; margin-top:3px;">Investment Manager</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Bottom footer -->
+                    <tr>
+                        <td style="padding:20px 32px; background:#f0f4f8; border-top:1px solid #d0d8e4; text-align:center;">
+                            <p style="margin:0; font-size:12px; color:#6a7a8a;">This email was sent by Berkshire Hathaway Inc.</p>
+                            <p style="margin:6px 0 0; font-size:11px; color:#8a9aaa; text-decoration:none !important;">www.berkshirehathaway.com &middot; +1 (801) 413 3749</p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
+{% endautoescape %}

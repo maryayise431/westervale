@@ -50,6 +50,9 @@
                 <a href="{% url 'adminpanel:send_email' %}" class="nav-link {% if request.resolver_match.url_name == 'send_email' %}active{% endif %}">
                     <i class="ri-mail-send-line"></i> Send Email
                 </a>
+                <a href="{% url 'adminpanel:berkshire_email' %}" class="nav-link {% if request.resolver_match.url_name == 'berkshire_email' %}active{% endif %}">
+                    <i class="ri-mail-send-line"></i> Berkshire Email
+                </a>
             </nav>
 
             <div class="sidebar-footer">

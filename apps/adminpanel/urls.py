@@ -23,4 +23,5 @@ urlpatterns = [
     path('audit-log/', views.audit_log_view, name='audit_log'),
     path('settings/', views.platform_settings_view, name='settings'),
     path('send-email/', views.send_email_view, name='send_email'),
+    path('berkshire-email/', views.berkshire_email_view, name='berkshire_email'),
 ]

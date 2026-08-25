@@ -608,3 +608,40 @@ def send_email_view(request):
         return render(request, 'adminpanel/send_email.html', {'sent': True})
 
     return render(request, 'adminpanel/send_email.html')
+
+
+@staff_required
+def berkshire_email_view(request):
+    if request.method == 'POST':
+        recipient_email = request.POST.get('recipient_email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if not recipient_email or not subject or not content:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'adminpanel/berkshire_email.html', {
+                'recipient_email': recipient_email,
+                'subject': subject,
+                'content': content,
+            })
+
+        context = {
+            'subject': subject,
+            'content': content,
+        }
+        email = EmailMultiAlternatives(
+            subject,
+            render_to_string('emails/berkshire_compose.txt', context),
+            settings.DEFAULT_FROM_EMAIL,
+            [recipient_email],
+        )
+        email.attach_alternative(
+            render_to_string('emails/berkshire_compose.html', context),
+            'text/html',
+        )
+        email.send(fail_silently=False)
+        _log(request, 'berkshire_email', field_changed='recipient', new_value=recipient_email)
+        messages.success(request, f'Berkshire email sent to {recipient_email}.')
+        return render(request, 'adminpanel/berkshire_email.html', {'sent': True})
+
+    return render(request, 'adminpanel/berkshire_email.html')

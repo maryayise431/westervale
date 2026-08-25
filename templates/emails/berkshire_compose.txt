@@ -1,0 +1,12 @@
+{{ subject }}
+
+{{ content }}
+
+Yours faithfully,
+
+Daniel J. Jaksich
+Investment Manager
+
+---
+Berkshire Hathaway Inc.
+www.berkshirehathaway.com
