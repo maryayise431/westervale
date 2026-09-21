@@ -128,7 +128,7 @@ MAX_UPLOAD_SIZE_MB = 5
 # Platform settings
 SITE_NAME = 'Westervale Capital'
 WELCOME_BONUS = 20.00
-WITHDRAWAL_MINIMUM = 1000.00
+WITHDRAWAL_MINIMUM = 99.00
 
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'info@westervalecapital.com')
 
