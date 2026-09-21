@@ -118,3 +118,34 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var radios = document.querySelectorAll('.wd-radio');
+    function syncPanels() {
+        radios.forEach(function (radio) {
+            var panel = radio.nextElementSibling;
+            if (!panel || !panel.classList.contains('wd-panel')) return;
+            if (radio.checked) {
+                panel.querySelectorAll('input, select, textarea').forEach(function (el) { el.disabled = false; });
+            } else {
+                panel.querySelectorAll('input, select, textarea').forEach(function (el) { el.disabled = true; });
+            }
+        });
+    }
+    radios.forEach(function (radio) { radio.addEventListener('change', syncPanels); });
+    syncPanels();
+
+    var form = document.getElementById('withdrawForm');
+    var btn = document.getElementById('submitBtn');
+    if (form && btn) {
+        form.addEventListener('submit', function () {
+            if (btn.disabled) return false;
+            btn.disabled = true;
+            btn.innerHTML = 'Processing... <i class="ri-loader-4-line ri-spin"></i>';
+        });
+    }
+})();
+</script>
+{% endblock %}

@@ -67,11 +67,15 @@ class AdminPanelTests(TestCase):
 
         self.assertEqual(AuditLog.objects.filter(action='Deposit Approved').count(), 1)
 
-    def test_approve_withdrawal_debits_balance(self):
-        withdrawal = Withdrawal.objects.create(
-            user=self.user, amount=1500, wallet_address='bc1xyz',
-            password_confirmed=True, status='pending',
-        )
+    def test_approve_withdrawal_does_not_double_deduct(self):
+        # Deduction happens when the user submits the request (2500 -> 1000)
+        self.client.force_login(self.user)
+        self.client.post(reverse('withdrawals:request'), {
+            'amount': '1500', 'wallet_address': 'bc1xyz', 'password': 'user-pass-123',
+        })
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.current_balance, Decimal('1000.00'))
+        withdrawal = Withdrawal.objects.get(user=self.user)
 
         self.client.force_login(self.admin)
         response = self.client.post(
@@ -82,12 +86,39 @@ class AdminPanelTests(TestCase):
         withdrawal.refresh_from_db()
         self.assertEqual(withdrawal.status, 'approved')
 
+        # Approval must NOT deduct again
         self.user.profile.refresh_from_db()
         self.assertEqual(self.user.profile.current_balance, Decimal('1000.00'))
 
         txn = Transaction.objects.get(user=self.user, type='withdrawal', related_withdrawal=withdrawal)
         self.assertEqual(txn.status, 'completed')
+        self.assertEqual(txn.balance_after, Decimal('1000.00'))
         self.assertEqual(AuditLog.objects.filter(action='Withdrawal Approved').count(), 1)
+
+    def test_reject_withdrawal_refunds_balance(self):
+        self.client.force_login(self.user)
+        self.client.post(reverse('withdrawals:request'), {
+            'amount': '1500', 'wallet_address': 'bc1xyz', 'password': 'user-pass-123',
+        })
+        withdrawal = Withdrawal.objects.get(user=self.user)
+
+        self.client.force_login(self.admin)
+        response = self.client.post(
+            reverse('adminpanel:withdrawal_review', args=[withdrawal.pk, 'reject'])
+        )
+        self.assertEqual(response.status_code, 302)
+
+        withdrawal.refresh_from_db()
+        self.assertEqual(withdrawal.status, 'rejected')
+
+        # Rejection refunds the amount back to the balance
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.current_balance, Decimal('2500.00'))
+
+        txn = Transaction.objects.get(user=self.user, type='withdrawal', related_withdrawal=withdrawal)
+        self.assertEqual(txn.status, 'rejected')
+        self.assertEqual(txn.balance_after, Decimal('2500.00'))
+        self.assertEqual(AuditLog.objects.filter(action='Withdrawal Rejected').count(), 1)
 
     def test_withdrawal_list_shows_bank_details(self):
         Withdrawal.objects.create(

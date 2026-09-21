@@ -44,12 +44,12 @@ class WithdrawalTests(TestCase):
         self.assertEqual(withdrawal.amount, Decimal('1200'))
         self.assertEqual(withdrawal.status, 'pending')
         self.assertTrue(withdrawal.password_confirmed)
-        # A pending transaction row is logged in history until admin approval
+        # A pending transaction row is logged in history and debited immediately
         txn = Transaction.objects.get(user=self.user, type='withdrawal', related_withdrawal=withdrawal)
         self.assertEqual(txn.status, 'pending')
-        self.assertIsNone(txn.balance_after)
+        self.assertEqual(txn.balance_after, Decimal('1300.00'))
         self.user.profile.refresh_from_db()
-        self.assertEqual(self.user.profile.current_balance, Decimal('2500.00'))
+        self.assertEqual(self.user.profile.current_balance, Decimal('1300.00'))
 
     def test_crypto_withdrawal_records_method(self):
         self.client.post(reverse('withdrawals:request'), {
@@ -80,6 +80,8 @@ class WithdrawalTests(TestCase):
         self.assertEqual(withdrawal.bank_name, 'Acme Bank')
         txn = Transaction.objects.get(user=self.user, type='withdrawal', related_withdrawal=withdrawal)
         self.assertEqual(txn.payment_method, 'Bank Transfer')
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.current_balance, Decimal('1300.00'))
 
     def test_bank_withdrawal_missing_fields_rejected(self):
         response = self.client.post(reverse('withdrawals:request'), {

@@ -106,6 +106,22 @@ def _mark_rejected(user, txn_type, related, remarks):
         txn.save()
 
 
+def _settle_approved(user, txn_type, related, remarks):
+    """Mark the pending transaction as completed without touching the balance.
+
+    Used for withdrawals: the balance was already debited when the request
+    was initiated, so approval must not deduct again.
+    """
+    lookup = {'user': user, 'type': txn_type, 'status': 'pending',
+              'related_deposit': related if txn_type == 'deposit' else None,
+              'related_withdrawal': related if txn_type == 'withdrawal' else None}
+    txn = Transaction.objects.filter(**lookup).first()
+    if txn is not None:
+        txn.status = 'completed'
+        txn.remarks = remarks or txn.remarks
+        txn.save()
+
+
 DEBIT_TYPES = ('withdrawal', 'investment')
 
 
@@ -369,28 +385,35 @@ def withdrawal_review(request, pk, action):
         remarks = request.POST.get('admin_remarks', '').strip()
         now = timezone.now()
         if action == 'approve':
-            if float(withdrawal.amount) > float(withdrawal.user.profile.current_balance):
-                messages.error(request, 'Insufficient balance to honour this withdrawal.')
-                return redirect('adminpanel:withdrawal_list')
             with transaction.atomic():
                 withdrawal.status = 'approved'
                 withdrawal.admin_remarks = remarks
                 withdrawal.reviewed_at = now
                 withdrawal.reviewed_by = request.user
                 withdrawal.save()
-                _debit(withdrawal.user, withdrawal.amount, 'withdrawal',
-                       'Withdrawal', 'Crypto', withdrawal)
+                _settle_approved(withdrawal.user, 'withdrawal', withdrawal, remarks)
             _log(request, 'Withdrawal Approved', withdrawal.user, 'status', 'pending', 'approved')
-            messages.success(request, f'Withdrawal of ${withdrawal.amount:,.2f} approved and debited.')
+            messages.success(request, f'Withdrawal of ${withdrawal.amount:,.2f} approved.')
         else:
-            withdrawal.status = 'rejected'
-            withdrawal.admin_remarks = remarks
-            withdrawal.reviewed_at = now
-            withdrawal.reviewed_by = request.user
-            withdrawal.save()
-            _mark_rejected(withdrawal.user, 'withdrawal', withdrawal, remarks)
+            with transaction.atomic():
+                withdrawal.status = 'rejected'
+                withdrawal.admin_remarks = remarks
+                withdrawal.reviewed_at = now
+                withdrawal.reviewed_by = request.user
+                withdrawal.save()
+                _mark_rejected(withdrawal.user, 'withdrawal', withdrawal, remarks)
+                profile = withdrawal.user.profile
+                profile.current_balance += Decimal(str(withdrawal.amount))
+                profile.save(update_fields=['current_balance', 'updated_at'])
+                txn = Transaction.objects.filter(
+                    user=withdrawal.user, type='withdrawal',
+                    status='rejected', related_withdrawal=withdrawal,
+                ).first()
+                if txn is not None:
+                    txn.balance_after = profile.current_balance
+                    txn.save(update_fields=['balance_after'])
             _log(request, 'Withdrawal Rejected', withdrawal.user, 'status', 'pending', 'rejected')
-            messages.info(request, f'Withdrawal of ${withdrawal.amount:,.2f} rejected.')
+            messages.info(request, f'Withdrawal of ${withdrawal.amount:,.2f} rejected and refunded.')
     return redirect('adminpanel:withdrawal_list')
 
 

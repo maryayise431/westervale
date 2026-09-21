@@ -1,7 +1,10 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
+from django.db import transaction as db_transaction
 from django.shortcuts import redirect, render
 
 from apps.core.notify import notify_admins
@@ -50,14 +53,18 @@ def withdrawal_request(request):
             if not all(bank_details.values()):
                 messages.error(request, 'Please complete all bank account fields.')
                 return redirect('withdrawals:request')
-            withdrawal = Withdrawal.objects.create(
-                user=request.user,
-                amount=amount,
-                method='bank',
-                wallet_address='Bank Transfer',
-                password_confirmed=True,
-                **bank_details,
-            )
+            with db_transaction.atomic():
+                withdrawal = Withdrawal.objects.create(
+                    user=request.user,
+                    amount=amount,
+                    method='bank',
+                    wallet_address='Bank Transfer',
+                    password_confirmed=True,
+                    **bank_details,
+                )
+                profile = request.user.profile
+                profile.current_balance -= Decimal(str(amount))
+                profile.save(update_fields=['current_balance', 'updated_at'])
             transaction_method = 'Bank Transfer'
             payout_info = (
                 f'Bank: {withdrawal.bank_name}\n'
@@ -71,21 +78,27 @@ def withdrawal_request(request):
             if not wallet:
                 messages.error(request, 'Please provide your wallet address.')
                 return redirect('withdrawals:request')
-            withdrawal = Withdrawal.objects.create(
-                user=request.user,
-                amount=amount,
-                method='crypto',
-                wallet_address=wallet,
-                password_confirmed=True,
-            )
+            with db_transaction.atomic():
+                withdrawal = Withdrawal.objects.create(
+                    user=request.user,
+                    amount=amount,
+                    method='crypto',
+                    wallet_address=wallet,
+                    password_confirmed=True,
+                )
+                profile = request.user.profile
+                profile.current_balance -= Decimal(str(amount))
+                profile.save(update_fields=['current_balance', 'updated_at'])
             transaction_method = 'Crypto'
             payout_info = f'Wallet: {withdrawal.wallet_address}'
 
+        profile = request.user.profile
         Transaction.objects.create(
             user=request.user,
             type='withdrawal',
             amount=withdrawal.amount,
             status='pending',
+            balance_after=profile.current_balance,
             remarks='Withdrawal',
             payment_method=transaction_method,
             related_withdrawal=withdrawal,
