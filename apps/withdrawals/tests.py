@@ -18,7 +18,7 @@ class WithdrawalTests(TestCase):
 
     def test_request_below_minimum_rejected(self):
         response = self.client.post(reverse('withdrawals:request'), {
-            'amount': '50', 'wallet_address': 'bc1xyz', 'password': 'secret-pass-123',
+            'amount': '30', 'wallet_address': 'bc1xyz', 'password': 'secret-pass-123',
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Withdrawal.objects.count(), 0)
